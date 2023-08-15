@@ -31,3 +31,44 @@ body {
   color: #4285F4; /* Couleur bleue souhaitée */
   font-weight: 600;
 }
+
+
+.slide-up {
+  animation: slideUp 0.3s ease;
+}
+
+.toast.fadeOut {
+  animation: fadeOut 0.3s ease-in;
+}
+
+.toast-success {
+  margin-bottom: 4rem; 
+}
+
+.toast-failure {
+  margin-bottom: 4rem; 
+}
+
+
+
+
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes fadeOut {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}

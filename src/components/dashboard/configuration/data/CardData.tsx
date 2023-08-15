@@ -23,7 +23,7 @@ export const cardData: CardCategory = {
     { label: "Portfolio", type: "text", required: false },
     { label: "Github", type: "text", required: false },
   ],
-  "School": [
+  "Education": [
     { label: "Name of your school", type: "text", required: true },
     { label: "Degree", type: "text", required: true  },
     { label: "Field of study",  type: "text", required: true },
