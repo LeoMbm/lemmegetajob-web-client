@@ -3,6 +3,21 @@
 import { Alert } from 'flowbite-react';
 import { useEffect, useState } from 'react';
 import { HiInformationCircle } from 'react-icons/hi';
+import type { CustomFlowbiteTheme } from 'flowbite-react';
+
+
+const customTheme: CustomFlowbiteTheme['alert'] = {
+  closeButton: {
+    color: {
+      blue: 'text-white hover:text-blue-100 bg-blue-300'
+    }
+    },
+
+    color: {
+      blue: "text-white bg-blue-500 border-cyan-500 dark:bg-cyan-200 dark:text-cyan-800",
+    }
+  };
+  
 
 export default function FeedbackAlert() {
     const [visible, setVisible] = useState(false);
@@ -25,7 +40,8 @@ export default function FeedbackAlert() {
     
   return visible ? (
     <Alert
-      color="success"
+      theme={customTheme}
+      color="blue"
       icon={HiInformationCircle}
       onDismiss={dismissAlert}
     >

@@ -25,3 +25,9 @@ body {
     )
     rgb(var(--background-start-rgb));
 }
+
+
+.active-item {
+  color: #4285F4; /* Couleur bleue souhaitée */
+  font-weight: 600;
+}

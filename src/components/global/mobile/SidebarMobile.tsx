@@ -85,7 +85,7 @@ export default function SidebarMobile({ isSidebarOpen }: { isSidebarOpen: boolea
           {botDropdownOpen && (
                             <>
                                 <Sidebar.Item
-                                    href="#"
+                                    href="/dashboard/bot/configuration"
                                     icon={RiToolsFill}
                                      className="text-sm py-1 pl-4"
                                 >
@@ -94,7 +94,7 @@ export default function SidebarMobile({ isSidebarOpen }: { isSidebarOpen: boolea
                                     </p>
                                 </Sidebar.Item>
                                 <Sidebar.Item
-                                    href="#"
+                                    href="/dashboard/bot/scraping"
                                     icon={HiInbox}
                                      className="text-sm py-1 pl-4"
                                 >
@@ -103,7 +103,7 @@ export default function SidebarMobile({ isSidebarOpen }: { isSidebarOpen: boolea
                                     </p>
                                 </Sidebar.Item>
                                 <Sidebar.Item
-                                    href="#"
+                                    href="/dashboard/bot/database"
                                     icon={HiTable}
                                      className="text-sm py-1 pl-4"
                                 >
@@ -112,7 +112,7 @@ export default function SidebarMobile({ isSidebarOpen }: { isSidebarOpen: boolea
                                     </p>
                                 </Sidebar.Item>
                                 <Sidebar.Item
-                                    href="#"
+                                    href="/dashboard/apply"
                                     icon={HiArrowSmRight}
                                      className="text-sm py-1 pl-4"
                                 >

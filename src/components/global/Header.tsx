@@ -42,14 +42,14 @@ export default function Header() {
         hiddenHeader ? '-translate-y-full' : 'translate-y-0'
       } transition-transform ease-in-out duration-300`}
     >
-      <Navbar.Brand href="https://flowbite-react.com">
+      <Navbar.Brand href="#">
         <img
           alt="Flowbite React Logo"
           className="mr-3 h-6 sm:h-9"
           src="https://flowbite.com/docs/images/logo.svg"
         />
         <span className="self-center whitespace-nowrap text-xl text-black font-semibold dark:text-white">
-          Flowbite React
+          RICO
         </span>
       </Navbar.Brand>
       <div className="flex md:order-2">

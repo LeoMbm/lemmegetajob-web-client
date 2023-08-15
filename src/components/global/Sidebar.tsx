@@ -6,9 +6,10 @@ import { HiArrowSmRight, HiChartPie, HiInbox, HiShoppingBag, HiTable, HiUser, Hi
 import { FaRobot } from 'react-icons/fa';
 import { RiSettings3Fill, RiToolsFill } from 'react-icons/ri';
 import { usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {MdKeyboardArrowDown} from 'react-icons/md'
 import {FaTools} from 'react-icons/fa'
+import {FiLogOut} from 'react-icons/fi'
 
 const customTheme: CustomFlowbiteTheme['sidebar'] = {
     root: {
@@ -18,11 +19,12 @@ const customTheme: CustomFlowbiteTheme['sidebar'] = {
   
 export default function ContentSeparator() {
     const activePath = usePathname();
-    const [botDropdownOpen, setBotDropdownOpen] = useState(false);
-
+    const [botDropdownOpen, setBotDropdownOpen] = useState(activePath.startsWith('/dashboard/bot'));
+    
     const toggleBotDropdown = () => {
         setBotDropdownOpen(!botDropdownOpen);
     };
+
   return (
     <div className="mobile:hidden h-full">
     <Sidebar theme={customTheme} aria-label="Sidebar with content separator example" className="w-64 flex-shrink-0" >
@@ -32,6 +34,7 @@ export default function ContentSeparator() {
             href="/dashboard"
             icon={HiChartPie}
             active={activePath === '/dashboard'}
+            className={activePath === '/dashboard' ? 'active-item' : ''}
           >
             <p>
               Dashboard
@@ -56,7 +59,8 @@ export default function ContentSeparator() {
                                 <Sidebar.Item
                                     href="/dashboard/bot/configuration"
                                     icon={RiToolsFill}
-                                     className="text-sm py-1 pl-4"
+                                    className={activePath === '/dashboard/bot/configuration' ? 'active-item py-1 pl-4' : 'text-sm py-1 pl-4'}
+                                     
                                 >
                                     <p>
                                         Configuration
@@ -65,7 +69,7 @@ export default function ContentSeparator() {
                                 <Sidebar.Item
                                     href="/dashboard/bot/scraping"
                                     icon={HiInbox}
-                                     className="text-sm py-1 pl-4"
+                                    className={activePath === '/dashboard/bot/scraping' ? 'active-item py-1 pl-4' : 'text-sm py-1 pl-4'}
                                 >
                                     <p>
                                         Scraping
@@ -74,7 +78,7 @@ export default function ContentSeparator() {
                                 <Sidebar.Item
                                     href="/dashboard/bot/database"
                                     icon={HiTable}
-                                     className="text-sm py-1 pl-4"
+                                    className={activePath === '/dashboard/bot/database' ? 'active-item py-1 pl-4' : 'text-sm py-1 pl-4'}
                                 >
                                     <p>
                                         Database
@@ -83,7 +87,7 @@ export default function ContentSeparator() {
                                 <Sidebar.Item
                                     href="/dashboard/bot/apply"
                                     icon={HiArrowSmRight}
-                                     className="text-sm py-1 pl-4"
+                                    className={activePath === '/dashboard/bot/apply' ? 'active-item py-1 pl-4' : 'text-sm py-1 pl-4'}
                                 >
                                     <p>
                                         Apply
@@ -94,6 +98,7 @@ export default function ContentSeparator() {
           <Sidebar.Item
             href="/dashboard/profile"
             icon={HiUser}
+            className={activePath === '/dashboard/profile' ? 'active-item' : ''}
           >
             <p>
               Profile
@@ -102,7 +107,7 @@ export default function ContentSeparator() {
           <Sidebar.Item
             href="/dashboard/settings"
             icon={RiSettings3Fill}
-            active={activePath === '/dashboard/settings'}
+            className={activePath === '/dashboard/settings' ? 'active-item' : ''}
           >
             <p>
               Settings
@@ -110,7 +115,7 @@ export default function ContentSeparator() {
           </Sidebar.Item>
           <Sidebar.Item
             href="#"
-            icon={HiArrowSmRight}
+            icon={FiLogOut}
           >
             <p>
               Sign Out
