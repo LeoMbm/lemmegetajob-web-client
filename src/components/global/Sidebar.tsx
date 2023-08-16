@@ -10,7 +10,7 @@ import { useEffect, useState } from 'react';
 import {MdKeyboardArrowDown} from 'react-icons/md'
 import {FaTools} from 'react-icons/fa'
 import {FiLogOut} from 'react-icons/fi'
-
+import { signOut } from 'next-auth/react';
 const customTheme: CustomFlowbiteTheme['sidebar'] = {
     root: {
       inner: 'flex-grow h-full overflow-y-auto overflow-x-hidden bg-gray-50 py-5 px-3 dark:bg-gray-800',
@@ -24,6 +24,10 @@ export default function ContentSeparator() {
     const toggleBotDropdown = () => {
         setBotDropdownOpen(!botDropdownOpen);
     };
+
+    const handleLogout = () => {
+        signOut();
+    }
 
   return (
     <div className="mobile:hidden h-full">
@@ -113,14 +117,18 @@ export default function ContentSeparator() {
               Settings
             </p>
           </Sidebar.Item>
-          <Sidebar.Item
-            href="#"
-            icon={FiLogOut}
-          >
+          <li>
+          <button 
+          onClick={handleLogout}
+          className='flex items-center justify-center rounded-lg p-2 text-base font-normal text-gray-900 hover:bg-gray-100 dark:text-white dark:hover:bg-gray-700'>
+            <svg stroke="currentColor" fill="currentColor" stroke-width="0" viewBox="0 0 20 20" aria-hidden="true" data-testid="flowbite-sidebar-item-icon" className="h-6 w-6 flex-shrink-0 text-gray-500 transition duration-75 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-white" height="1em" width="1em" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L12.586 11H5a1 1 0 110-2h7.586l-2.293-2.293a1 1 0 010-1.414z" clip-rule="evenodd"></path></svg>
+            <span className='px-3 flex-1 whitespace-nowrap'>
             <p>
               Sign Out
             </p>
-          </Sidebar.Item>
+            </span>
+          </button>
+          </li>
         </Sidebar.ItemGroup>
         <Sidebar.ItemGroup className="mt-auto">
           <Sidebar.Item

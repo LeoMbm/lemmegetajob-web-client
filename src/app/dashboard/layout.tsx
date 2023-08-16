@@ -1,6 +1,7 @@
 import Sidebar from "@/components/global/Sidebar"
 import Header from "@/components/global/Header"
 import FooterWithLogo from "@/components/global/Footer"
+import AuthRoute from "@/components/auth/AuthRoute";
 
 
 export default function DashboardLayout({

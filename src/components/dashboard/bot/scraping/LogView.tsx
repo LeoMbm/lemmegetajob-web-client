@@ -5,10 +5,12 @@ import { LaunchButton } from '../LaunchButton';
 import ToastFeedback from '../../Toast';
 import { ClearLogsButton } from '../ClearLogsButton';
 import { StopButton } from '../StopButton';
+import { useRouter } from 'next/navigation';
 
 const LOG_URL = process.env.NEXT_PUBLIC_LOG_REALTIME_URL;
 
 export const LogView = () => {
+  const router = useRouter()
   const [logs, setLogs] = useState<string[]>([]);
   const scrollableContainerRef = useRef<HTMLDivElement>(null);
   const [socket, setSocket] = useState<WebSocket | null>(null);
@@ -16,6 +18,7 @@ export const LogView = () => {
   const [namespaces, setNamespaces] = useState<string | null>(null);
   const [deployementName, setDeployementName] = useState<string | null>(null);
   const [diodeStatus, setDiodeStatus] = useState('');
+  const [message, setMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const scrollableContainer = scrollableContainerRef.current;
@@ -33,6 +36,7 @@ export const LogView = () => {
     setNamespaces(data.namespace);
     setDeployementName(data.deployment_name);
     console.log(data);
+    setMessage(data.message);
     return data;
   };
 
@@ -74,7 +78,11 @@ export const LogView = () => {
         console.log('Bot launched successfully let\'s go !');
         setDiodeStatus('success');
         setBotLaunched(true);
-      } else {
+      } else if (response.status === 401) {
+        console.log("Redirect to sign in page")
+        router.push("/signin")
+      } 
+      else {
         setDiodeStatus('failure');
         setTimeout(() => {
           setDiodeStatus('');
@@ -135,7 +143,7 @@ export const LogView = () => {
 
     return (
     <div>
-      <div className='flex items-center justify-between w-full xl:w-1/4'>
+      <div className='flex items-center justify-between w-full xl:w-1/2 xl:mx-auto'>
       <LaunchButton diodeStatus={diodeStatus} launcher={handleLaunch} />
       <StopButton diodeStatus={diodeStatus} launcher={handleStop} />
       <ClearLogsButton handler={handleClearLogs} disabled={logs.length === 0 ? true : false} />
@@ -161,7 +169,7 @@ export const LogView = () => {
           </ScrollableFeed>
         </div>
       </div>
-      <ToastFeedback status={diodeStatus} />
+      <ToastFeedback message={message} status={diodeStatus} />
     </div>
   );
 };

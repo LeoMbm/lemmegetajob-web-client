@@ -1,5 +1,7 @@
 'use client';
 
+import { useSession } from "next-auth/react";
+
 export default function Card() {
     const data = {
       "Total Jobs": "0",
@@ -8,6 +10,9 @@ export default function Card() {
       "Success": "0",
       "Failure": "0",
     };
+
+    const {data: session} = useSession();
+
   
     return (
       <div className="flex flex-wrap -mx-4">
