@@ -6,6 +6,8 @@ import ToastFeedback from '../../Toast';
 import { ClearLogsButton } from '../ClearLogsButton';
 import { StopButton } from '../StopButton';
 import { useRouter } from 'next/navigation';
+import { useSession } from 'next-auth/react';
+import { getStoredToken } from '@/lib/cookie';
 
 const LOG_URL = process.env.NEXT_PUBLIC_LOG_REALTIME_URL;
 
@@ -18,7 +20,36 @@ export const LogView = () => {
   const [namespaces, setNamespaces] = useState<string | null>(null);
   const [deployementName, setDeployementName] = useState<string | null>(null);
   const [diodeStatus, setDiodeStatus] = useState('');
-  const [message, setMessage] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>('');
+  const session = useSession()
+  const authToken = session.data?.backendToken;
+  
+
+
+  useEffect(() => {
+    // Restore logs and diodeStatus from local storage on page load
+    const savedLogs = localStorage.getItem('logs');
+    if (savedLogs) {
+      setLogs(JSON.parse(savedLogs));
+    }
+
+    const savedDiodeStatus = localStorage.getItem('diodeStatus');
+    if (savedDiodeStatus) {
+      setDiodeStatus(savedDiodeStatus);
+    }
+
+    // ...
+  }, []);
+
+  useEffect(() => {
+    // Save logs and diodeStatus to local storage whenever they change
+    localStorage.setItem('logs', JSON.stringify(logs));
+    localStorage.setItem('diodeStatus', diodeStatus);
+
+    // ...
+  }, [logs, diodeStatus]);
+
+
 
   useEffect(() => {
     const scrollableContainer = scrollableContainerRef.current;
@@ -28,21 +59,39 @@ export const LogView = () => {
 
 
   const launchInstance = async () => {
+    const headers = {
+      "Authorization": `Bearer ${authToken}`,
+
+  };
     const res = await fetch('/api/bot/launch', {
       method: 'POST',
+      headers
     });
-  
     const data = await res.json();
-    setNamespaces(data.namespace);
-    setDeployementName(data.deployment_name);
-    console.log(data);
-    setMessage(data.message);
+
+    if (res.status === 401) {
+      console.log("Redirect to sign in page")
+
+    } 
+    if (res.status === 500) {
+      console.log("Error launching bot");
+
+    } 
+    if (res.status === 200) {
+      console.log("Bot launched successfully");
+      setNamespaces(data.namespace);
+      setDeployementName(data.deployment_name);
+    }
     return data;
   };
 
   const stopInstance = async () => {
+    const headers = {
+      "Authorization": `Bearer ${authToken}`,
+
+  };
     const res = await fetch('/api/bot/stop', {
-      method: 'POST',
+      method: 'POST'
     });
 
     const data = await res.json();
@@ -54,11 +103,24 @@ export const LogView = () => {
     console.log('Stopping bot...');
     try {
       const response = await stopInstance();
+      
       console.log(response);
       if (response.status === 200) {
         console.log('Bot stopped successfully.');
-        setDiodeStatus('');
+        setDiodeStatus('stopped');
+        setMessage("Bot stopped successfully.");
         setBotLaunched(false);
+        localStorage.removeItem('logs');
+        localStorage.removeItem('diodeStatus');
+      }
+      if (response.message.status === 401) {
+        setMessage("You are not authorized to perform this action.");
+        console.log("Redirect to sign in page")
+        // router.push("/signin")
+      }
+      if (response.message.status === 404){
+        setMessage("Bot not found");
+        console.log("Bot not found")
       }
     } catch (error) {
       console.error('Error stopping bot:', error);
@@ -70,20 +132,22 @@ export const LogView = () => {
   const handleLaunch = async () => {
     console.log('Launching bot...');
     setDiodeStatus('waiting');
-    
     try {
       const response = await launchInstance();
-      console.log(response);
       if (response.status === 200) {
         console.log('Bot launched successfully let\'s go !');
         setDiodeStatus('success');
+        setMessage("Bot launched successfully");
         setBotLaunched(true);
       } else if (response.status === 401) {
+        setDiodeStatus('failure');
+        setMessage("You are not authorized to perform this action.");
         console.log("Redirect to sign in page")
-        router.push("/signin")
+        // router.push("/signin")
       } 
       else {
         setDiodeStatus('failure');
+        setMessage("Error launching bot");
         setTimeout(() => {
           setDiodeStatus('');
         }, 5000); // Réinitialiser la diode après 5 secondes
@@ -106,7 +170,7 @@ export const LogView = () => {
 
   useEffect(() => {
     if (botLaunched) {
-      const socket = new WebSocket(`${LOG_URL}/leombm`);
+      const socket = new WebSocket(`${LOG_URL}/leomecom`);
 
       setSocket(socket);
 

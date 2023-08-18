@@ -1,5 +1,6 @@
 'use client';
 
+import { getStoredToken } from "@/lib/cookie";
 import { useSession } from "next-auth/react";
 
 export default function Card() {
@@ -11,7 +12,9 @@ export default function Card() {
       "Failure": "0",
     };
 
-    const {data: session} = useSession();
+    const session = useSession();
+
+    
 
   
     return (

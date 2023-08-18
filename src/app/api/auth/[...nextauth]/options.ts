@@ -4,6 +4,8 @@ import { PrismaAdapter } from "@auth/prisma-adapter";
 import { PrismaClient } from "@prisma/client";
 import CredentialsProvider from "next-auth/providers/credentials"
 import bcrypt from "bcrypt"
+import jwt from "jsonwebtoken"
+import { getStoredToken, storeToken } from "@/lib/cookie";
 
 const prisma = new PrismaClient()
 export const authOptions = {
@@ -46,28 +48,25 @@ export const authOptions = {
         signOut: "/signout",
       },
       callbacks: {
-        session: ({ session, token }) => {
-          return {
-            ...session,
-            user: {
-              ...session.user,
-              id: token.id,
-              randomKey: token.randomKey,
-            },
-          };
+        async session(session) {
+          // Find a way to save the token for avoid regenerate it every time
+            if (!session.backendToken) {
+                const storedToken = getStoredToken();
+                if (storedToken) {
+                    session.backendToken = storedToken;
+                } else {
+                  const expiresIn = 1800;
+                    session.backendToken = jwt.sign(
+                        { sub: session.token.sub, email: session.token.email },
+                        process.env.NEXTAUTH_SECRET,
+                        { expiresIn: expiresIn }
+                    );
+                    storeToken(session.backendToken, expiresIn);
+                }
+            }
+            return session;
         },
-        jwt: ({ token, user }) => {
-          if (user) {
-            const u = user as unknown as any;
-            return {
-              ...token,
-              id: u.id,
-              randomKey: u.randomKey,
-            };
-          }
-          return token;
-        },
-      },
+    },
 };
 
 export default NextAuth(authOptions)

@@ -3,6 +3,8 @@
 import { useState, useEffect, use } from "react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
+import ToastMessage from "../global/alert/Toast";
+import { log } from "console";
 
 export default function CredentialsForm() {
     const session = useSession();
@@ -11,13 +13,24 @@ export default function CredentialsForm() {
     const [password, setPassword] = useState('');
     const searchParams = useSearchParams();
     const callbackUrl = searchParams.get("callbackUrl") || "/dashboard";
+    const [isLoading, setIsLoading] = useState(false);
+    const [message, setMessage] = useState(null);
+    const [status, setStatus] = useState(null);
+    // console.log(session);
+    
   
     useEffect(() => {
         if (session?.status === 'authenticated') {
           router.push('/dashboard');
         }
+
     }, [session]);
 
+
+    const handleCloseToast = () => {
+      setMessage(null);
+      setStatus(null);
+    };
 
     const handleEmailChange = (event) => {
         setEmail(event.target.value);
@@ -34,15 +47,20 @@ export default function CredentialsForm() {
             password: password
         };
         console.log(data);
+        setIsLoading(true);
         signIn('credentials', { ...data, redirect: false, callbackUrl})
         .then((response) => {
-          if (response.ok) {
+          if (response?.error === null) {
               console.log(response);
-              router.push(response.url);
+            }
+            else {
+                console.log(response);
+                setMessage(response.error);
+                setStatus('error');
             }
         })
-        .catch((error) => {
-            console.log(error);
+        .finally(() => {
+            setIsLoading(false);
         });
     }
 
@@ -65,7 +83,15 @@ export default function CredentialsForm() {
           </div>
           <label htmlFor="remember" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Remember me</label>
         </div>
-        <button onClick={(e) => handleSubmit(e)} type="submit" className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">Submit</button>
+        <button
+            onClick={(e) => handleSubmit(e)}
+            type="submit"
+            className={`text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
+            disabled={isLoading}
+        >
+            {isLoading ? 'Loading...' : 'Submit'}
+        </button>
+        {message && <ToastMessage message={message} status={status} onClose={handleCloseToast} />}
       </form>
     );
   }

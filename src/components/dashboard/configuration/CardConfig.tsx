@@ -9,12 +9,14 @@ export default function CardConfig() {
     const [modalContent, setModalContent] = useState('');
     const [currentPage, setCurrentPage] = useState(0);
     const [formData, setFormData] = useState<FormData>({});
-    const [submittedCategories, setSubmittedCategories] = useState<SubmittedCategories>({});
+    const [submittedCategories, setSubmittedCategories] = useState<string[]>([]);
     const [progress, setProgress] = useState(0);
     const [isSaved, setIsSaved] = useState(false);
     const [showConfirmation, setShowConfirmation] = useState(false);
     const questionsPerPage = 6;
 
+    console.log(submittedCategories);
+    
     useEffect(() => {
         const submitted = JSON.parse(localStorage.getItem('submittedCategories') || '{}');
         setSubmittedCategories(submitted);
@@ -29,6 +31,9 @@ export default function CardConfig() {
 
         const savedFormData = JSON.parse(localStorage.getItem(`submittedData_${content}`) || '{}');
         setFormData(savedFormData);
+      
+        const existingSubmittedCategories = JSON.parse(localStorage.getItem('submittedCategories') || '[]');
+        setIsSaved(existingSubmittedCategories.includes(content));
       };
     
       const closeModal = () => {
@@ -47,25 +52,35 @@ export default function CardConfig() {
     
       const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-    
+      
         const requiredFields = cardData[modalContent].filter((field) => field.required);
         const missingRequiredFields = requiredFields.filter((field) => !formData[`field_${field.label}`]);
-    
+      
         if (missingRequiredFields.length > 0) {
           console.log('The following fields are required and empty:', missingRequiredFields.map((field) => field.label));
           return;
         }
+      
         localStorage.setItem(`submittedData_${modalContent}`, JSON.stringify(formData));
-
+      
         // Enregistrer les catégories soumises dans le localStorage
-        const updatedSubmittedCategories = { ...submittedCategories, [modalContent]: true };
-        localStorage.setItem('submittedCategories', JSON.stringify(updatedSubmittedCategories));
-    
+        const newSubmittedCategory = modalContent;
+        let existingSubmittedCategories = JSON.parse(localStorage.getItem('submittedCategories') || '[]');
+      
+        if (!Array.isArray(existingSubmittedCategories)) {
+          existingSubmittedCategories = [];
+        }
+      
+        if (!existingSubmittedCategories.includes(newSubmittedCategory)) {
+          existingSubmittedCategories.push(newSubmittedCategory);
+          localStorage.setItem('submittedCategories', JSON.stringify(existingSubmittedCategories));
+        }
+      
         console.log('Form data:', formData);
-    
+      
         // Affichage de l'icône de confirmation
         setIsSaved(true);
-    
+      
         // Fermeture de la modal après quelques secondes
         setShowConfirmation(true);
         setTimeout(() => {
@@ -73,7 +88,6 @@ export default function CardConfig() {
           closeModal();
         }, 3000);
       };
-    
       const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value, type, checked } = event.target;
     
@@ -101,7 +115,7 @@ export default function CardConfig() {
     <div key={label} className="w-full md:w-1/2 xl:w-1/3 p-4">
         <div
         className={`bg-gray-50 border border-gray-200 rounded-xl shadow p-6 cursor-pointer hover:bg-gray-950 relative transform transition-transform hover:scale-105 ${
-            submittedCategories[label] ? 'bg-green-100' : ''
+          submittedCategories.includes(label) ? 'bg-green-100' : ''
         }`}
         onClick={() => openModal(label)}
         >
@@ -109,7 +123,7 @@ export default function CardConfig() {
             <div className="flex-1 text-center md:text-left">
             <h3 className="font-bold text-3xl text-gray-600">{label}</h3>
             </div>
-            {submittedCategories[label] && (
+            {submittedCategories.includes(label) && (
             <svg
                 className="w-6 h-6 text-green-500"
                 fill="none"

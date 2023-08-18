@@ -3,7 +3,7 @@
 import { Toast } from 'flowbite-react';
 import { HiCheck, HiX, HiExclamation } from 'react-icons/hi';
 
-export default function ToastMessage({message, status}) {
+export default function ToastMessage({ message, status, onClose }) {
   return (
     <div className="fixed bottom-4 right-4 flex flex-col gap-4">
         {status === 'success' && (
@@ -14,7 +14,7 @@ export default function ToastMessage({message, status}) {
         <div className="ml-3 text-sm font-normal">
           {message}
         </div>
-        <Toast.Toggle />
+        <Toast.Toggle onClick={onClose} />
       </Toast>
             )}
         {status === 'error' && (
@@ -26,7 +26,7 @@ export default function ToastMessage({message, status}) {
         <div className="ml-3 text-sm font-normal">
           {message}
         </div>
-        <Toast.Toggle />
+        <Toast.Toggle onClick={onClose} />
       </Toast>
             )}
     </div>
