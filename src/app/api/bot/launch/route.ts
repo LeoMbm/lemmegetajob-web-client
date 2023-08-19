@@ -21,6 +21,7 @@ export async function POST(req: Request, res: Response) {
         );
       }
       const response = await axios.post(`${process.env.BASE_API_URL}/launch-bot/?candidate_username=leombm`, {}, config);
+      
       if (response.status === 200) {
         return new Response(JSON.stringify(response.data), {
           status: 200},

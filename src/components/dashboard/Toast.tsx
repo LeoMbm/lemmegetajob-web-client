@@ -29,7 +29,7 @@ export default function ToastFeedback({message, status}) {
         <Toast.Toggle />
       </Toast>
             )}
-        {status === 'stopped'&& (
+        {message.includes("stopped") && (
 
       <Toast className="slide-up toast-failure fadeOut" duration={300}>
         <div className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-orange-100 text-orange-500 dark:bg-orange-700 dark:text-orange-200">

@@ -78,10 +78,7 @@ export default function CardConfig() {
       
         console.log('Form data:', formData);
       
-        // Affichage de l'icône de confirmation
         setIsSaved(true);
-      
-        // Fermeture de la modal après quelques secondes
         setShowConfirmation(true);
         setTimeout(() => {
           setShowConfirmation(false);

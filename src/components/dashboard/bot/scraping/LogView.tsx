@@ -27,7 +27,6 @@ export const LogView = () => {
 
 
   useEffect(() => {
-    // Restore logs and diodeStatus from local storage on page load
     const savedLogs = localStorage.getItem('logs');
     if (savedLogs) {
       setLogs(JSON.parse(savedLogs));
@@ -38,11 +37,15 @@ export const LogView = () => {
       setDiodeStatus(savedDiodeStatus);
     }
 
+    const savedBotLaunched = localStorage.getItem('botLaunched');
+    if (savedBotLaunched) {
+      setBotLaunched(true);
+    }
+
     // ...
   }, []);
 
   useEffect(() => {
-    // Save logs and diodeStatus to local storage whenever they change
     localStorage.setItem('logs', JSON.stringify(logs));
     localStorage.setItem('diodeStatus', diodeStatus);
 
@@ -107,11 +110,11 @@ export const LogView = () => {
       console.log(response);
       if (response.status === 200) {
         console.log('Bot stopped successfully.');
-        setDiodeStatus('stopped');
         setMessage("Bot stopped successfully.");
         setBotLaunched(false);
         localStorage.removeItem('logs');
         localStorage.removeItem('diodeStatus');
+        localStorage.removeItem('botLaunched');
       }
       if (response.message.status === 401) {
         setMessage("You are not authorized to perform this action.");
@@ -139,6 +142,7 @@ export const LogView = () => {
         setDiodeStatus('success');
         setMessage("Bot launched successfully");
         setBotLaunched(true);
+        localStorage.setItem('botLaunched', 'true');
       } else if (response.status === 401) {
         setDiodeStatus('failure');
         setMessage("You are not authorized to perform this action.");
@@ -146,6 +150,7 @@ export const LogView = () => {
         // router.push("/signin")
       } 
       else {
+        console.log(response);
         setDiodeStatus('failure');
         setMessage("Error launching bot");
         setTimeout(() => {
@@ -193,6 +198,7 @@ export const LogView = () => {
         console.log('WebSocket connection closed.');
         setDiodeStatus('');
         setBotLaunched(false);
+        setSocket(null);
  
       };
 

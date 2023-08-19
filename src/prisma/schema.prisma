@@ -46,6 +46,7 @@ model User {
   update_time      DateTime? @db.Timestamp(6)
   accounts      Account[]
   sessions      Session[]
+  jobs          Job[]
   @@unique([email])
 }
 
@@ -55,4 +56,20 @@ model VerificationToken {
   expires    DateTime
 
   @@unique([identifier, token])
+}
+
+model Job {
+  id           Int      @id @default(autoincrement())
+  title        String
+  company      String
+  location     String
+  apply_link   String
+  link_id      String    // Ne pas marquer comme @unique ici
+  applied      Boolean   @default(false)
+  added_on     DateTime  @default(now())
+  applied_on   DateTime?
+  userId      String    // Clé étrangère vers l'utilisateur auquel l'offre d'emploi est associée
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId, link_id], name: "unique_link_id_per_user")
+  @@map(name: "jobs")   // Optionnel : renommer la table si nécessaire
 }
