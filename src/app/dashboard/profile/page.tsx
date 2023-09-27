@@ -1,3 +1,7 @@
+import { UserCard } from "@/components/dashboard/profile/UserCard";
+
 export default function Page() {
-    return <div className="h-full">Hello, Profile Page!</div>
+    return <div className="h-full">
+      <UserCard />
+    </div>
   }

@@ -20,7 +20,9 @@ export async function POST(req: Request, res: Response) {
           status: 401},
         );
       }
-      const response = await axios.post(`${process.env.BASE_API_URL}/launch-bot/?candidate_username=leombm`, {}, config);
+      const user = session.user;
+      console.log(user);
+      const response = await axios.post(`${process.env.BASE_API_URL}/launch-bot`, {}, config);
       
       if (response.status === 200) {
         return new Response(JSON.stringify(response.data), {

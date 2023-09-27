@@ -21,7 +21,7 @@ export async function POST(req: Request, res: Response) {
           status: 401},
         );
       }
-      const response = await axios.post(`${process.env.BASE_API_URL}/delete-bot/?name=scraping-deployment&namespace=candidate-leomecom`, {}, config);
+      const response = await axios.post(`${process.env.BASE_API_URL}/delete-bot`, {}, config);
       console.log(response)
       if (response.status === 200) {
         return new Response(JSON.stringify(response.data), {

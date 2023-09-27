@@ -57,7 +57,7 @@ export const authOptions = {
                 } else {
                   const expiresIn = 1800;
                     session.backendToken = jwt.sign(
-                        { sub: session.token.sub, email: session.token.email },
+                        { sub: session.token.sub, email: session.token.email},
                         process.env.NEXTAUTH_SECRET,
                         { expiresIn: expiresIn }
                     );

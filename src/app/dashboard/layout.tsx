@@ -20,7 +20,8 @@ export default function DashboardLayout({
           <div className="flex flex-col justify-between mt-14">
             <Sidebar />
           </div>
-          <section className="flex-grow overflow-y-auto mt-14">{children}</section>
+          <section className="flex-grow overflow-y-auto mt-14">
+            {children}</section>
         </div>
             <FooterWithLogo />
       </div>

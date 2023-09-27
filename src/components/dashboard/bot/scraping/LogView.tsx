@@ -8,6 +8,8 @@ import { StopButton } from '../StopButton';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { getStoredToken } from '@/lib/cookie';
+import { emit } from 'process';
+import { LogItem } from './LogItem';
 
 const LOG_URL = process.env.NEXT_PUBLIC_LOG_REALTIME_URL;
 
@@ -23,6 +25,12 @@ export const LogView = () => {
   const [message, setMessage] = useState<string | null>('');
   const session = useSession()
   const authToken = session.data?.backendToken;
+  const email = session.data?.token?.email;
+  // Remove all special characters from email address
+  const socket_email = email?.replace(/[^a-zA-Z0-9]/g, '');
+  console.log(socket_email);
+  
+  
   
 
 
@@ -94,7 +102,8 @@ export const LogView = () => {
 
   };
     const res = await fetch('/api/bot/stop', {
-      method: 'POST'
+      method: 'POST',
+      headers
     });
 
     const data = await res.json();
@@ -140,9 +149,9 @@ export const LogView = () => {
       if (response.status === 200) {
         console.log('Bot launched successfully let\'s go !');
         setDiodeStatus('success');
-        setMessage("Bot launched successfully");
         setBotLaunched(true);
         localStorage.setItem('botLaunched', 'true');
+        setMessage("Bot launched successfully");
       } else if (response.status === 401) {
         setDiodeStatus('failure');
         setMessage("You are not authorized to perform this action.");
@@ -174,8 +183,8 @@ export const LogView = () => {
   };
 
   useEffect(() => {
-    if (botLaunched) {
-      const socket = new WebSocket(`${LOG_URL}/leomecom`);
+    if (botLaunched && socket_email) {
+      const socket = new WebSocket(`${LOG_URL}/${socket_email}`);
 
       setSocket(socket);
 
@@ -198,6 +207,7 @@ export const LogView = () => {
         console.log('WebSocket connection closed.');
         setDiodeStatus('');
         setBotLaunched(false);
+        localStorage.removeItem('botLaunched');
         setSocket(null);
  
       };
@@ -227,13 +237,7 @@ export const LogView = () => {
               </div>
             ) : (
               logs.map((log, i) => (
-                <div
-                  key={i}
-                  className="flex items-center justify-between px-4 py-3 border-b border-gray-300 last:border-b-0 bg-white hover:bg-gray-100 transition-colors duration-300"
-                >
-                  <span className="text-gray-800">{log}</span>
-                  <span className="px-2 py-1 text-xs rounded-md bg-blue-500 text-white">New</span>
-                </div>
+                <LogItem log={log} index={i} />
               ))
             )}
           </ScrollableFeed>

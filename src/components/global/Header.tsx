@@ -3,12 +3,15 @@
 import { Avatar, Dropdown, Navbar } from 'flowbite-react';
 import { useEffect, useRef, useState } from 'react';
 import SidebarMobile from './mobile/SidebarMobile';
+import { useSession } from 'next-auth/react';
 
 export default function Header() {
 
     const [prevScrollPos, setPrevScrollPos] = useState(0);
     const [hiddenHeader, setHiddenHeader] = useState(false);
     const [isSidebarOpen, setSidebarOpen] = useState(false);
+    const session = useSession();
+    const email = session.data?.token?.email;
     
     const toggleSidebar = () => {
         setSidebarOpen(!isSidebarOpen);
@@ -69,7 +72,7 @@ export default function Header() {
               John Doe
             </span>
             <span className="block truncate text-sm font-medium">
-              name@gmail.com
+              {email}
             </span>
           </Dropdown.Header>
           <Dropdown.Item href='/dashboard/profile'>

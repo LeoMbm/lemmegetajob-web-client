@@ -36,104 +36,104 @@ export default function CardConfig() {
         setIsSaved(existingSubmittedCategories.includes(content));
       };
     
-      const closeModal = () => {
-        setModalOpen(false);
-      };
+    const closeModal = () => {
+      setModalOpen(false);
+    };
+  
+    const nextPage = () => {
+      setCurrentPage((prevPage) => prevPage + 1);
+      setProgress(((currentPage + 1) / Math.ceil(cardData[modalContent].length / questionsPerPage)) * 100);
+    };
+  
+    const prevPage = () => {
+      setCurrentPage((prevPage) => prevPage - 1);
+      setProgress(((currentPage - 1) / Math.ceil(cardData[modalContent].length / questionsPerPage)) * 100);
+    };
+  
+    const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+      event.preventDefault();
     
-      const nextPage = () => {
-        setCurrentPage((prevPage) => prevPage + 1);
-        setProgress(((currentPage + 1) / Math.ceil(cardData[modalContent].length / questionsPerPage)) * 100);
-      };
+      const requiredFields = cardData[modalContent].filter((field) => field.required);
+      const missingRequiredFields = requiredFields.filter((field) => !formData[`field_${field.label}`]);
     
-      const prevPage = () => {
-        setCurrentPage((prevPage) => prevPage - 1);
-        setProgress(((currentPage - 1) / Math.ceil(cardData[modalContent].length / questionsPerPage)) * 100);
-      };
+      if (missingRequiredFields.length > 0) {
+        console.log('The following fields are required and empty:', missingRequiredFields.map((field) => field.label));
+        return;
+      }
     
-      const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-        event.preventDefault();
-      
-        const requiredFields = cardData[modalContent].filter((field) => field.required);
-        const missingRequiredFields = requiredFields.filter((field) => !formData[`field_${field.label}`]);
-      
-        if (missingRequiredFields.length > 0) {
-          console.log('The following fields are required and empty:', missingRequiredFields.map((field) => field.label));
-          return;
-        }
-      
-        localStorage.setItem(`submittedData_${modalContent}`, JSON.stringify(formData));
-      
-        // Enregistrer les catégories soumises dans le localStorage
-        const newSubmittedCategory = modalContent;
-        let existingSubmittedCategories = JSON.parse(localStorage.getItem('submittedCategories') || '[]');
-      
-        if (!Array.isArray(existingSubmittedCategories)) {
-          existingSubmittedCategories = [];
-        }
-      
-        if (!existingSubmittedCategories.includes(newSubmittedCategory)) {
-          existingSubmittedCategories.push(newSubmittedCategory);
-          localStorage.setItem('submittedCategories', JSON.stringify(existingSubmittedCategories));
-        }
-      
-        console.log('Form data:', formData);
-      
-        setIsSaved(true);
-        setShowConfirmation(true);
-        setTimeout(() => {
-          setShowConfirmation(false);
-          closeModal();
-        }, 3000);
-      };
-      const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-        const { name, value, type, checked } = event.target;
+      localStorage.setItem(`submittedData_${modalContent}`, JSON.stringify(formData));
     
-        const newValue = type === 'checkbox' ? checked : value;
+      // Enregistrer les catégories soumises dans le localStorage
+      const newSubmittedCategory = modalContent;
+      let existingSubmittedCategories = JSON.parse(localStorage.getItem('submittedCategories') || '[]');
     
-        setFormData((prevFormData) => ({
-          ...prevFormData,
-          [name]: newValue,
-        }));
-      };
+      if (!Array.isArray(existingSubmittedCategories)) {
+        existingSubmittedCategories = [];
+      }
+    
+      if (!existingSubmittedCategories.includes(newSubmittedCategory)) {
+        existingSubmittedCategories.push(newSubmittedCategory);
+        localStorage.setItem('submittedCategories', JSON.stringify(existingSubmittedCategories));
+      }
+    
+      console.log('Form data:', formData);
+    
+      setIsSaved(true);
+      setShowConfirmation(true);
+      setTimeout(() => {
+        setShowConfirmation(false);
+        closeModal();
+      }, 3000);
+    };
+    const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value, type, checked } = event.target;
+  
+      const newValue = type === 'checkbox' ? checked : value;
+  
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: newValue,
+      }));
+    };
 
 
-      const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-        const { name, value } = event.target;
-        setFormData((prevFormData) => ({
-          ...prevFormData,
-          [name]: value,
-        }));
-      };
+    const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+      const { name, value } = event.target;
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        [name]: value,
+      }));
+    };
     
 
   return (
     <div className="flex flex-wrap -mx-4">
-            {Object.entries(cardData).map(([label, fields]) => (
-    <div key={label} className="w-full md:w-1/2 xl:w-1/3 p-4">
+    {Object.entries(cardData).map(([label, fields]) => (
+      <div key={label} className="w-full md:w-1/2 xl:w-1/3 p-4">
         <div
-        className={`bg-gray-50 border border-gray-200 rounded-xl shadow p-6 cursor-pointer hover:bg-gray-950 relative transform transition-transform hover:scale-105 ${
-          submittedCategories.includes(label) ? 'bg-green-100' : ''
-        }`}
-        onClick={() => openModal(label)}
+          className={`bg-gray-50 border border-gray-200 rounded-xl shadow p-6 cursor-pointer hover:bg-gray-950 relative transform transition-transform hover:scale-105 ${
+            Array.isArray(submittedCategories) && submittedCategories.includes(label) ? 'bg-green-100' : ''
+          }`}
+          onClick={() => openModal(label)}
         >
-        <div className="flex flex-row items-center">
+          <div className="flex flex-row items-center">
             <div className="flex-1 text-center md:text-left">
-            <h3 className="font-bold text-3xl text-gray-600">{label}</h3>
+              <h3 className="font-bold text-3xl text-gray-600">{label}</h3>
             </div>
-            {submittedCategories.includes(label) && (
-            <svg
+            {Array.isArray(submittedCategories) && submittedCategories.includes(label) && (
+              <svg
                 className="w-6 h-6 text-green-500"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
                 xmlns="http://www.w3.org/2000/svg"
-            >
+              >
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7"></path>
-            </svg>
+              </svg>
             )}
+          </div>
         </div>
-        </div>
-    </div>
+      </div>
     ))}
 
 {modalOpen && (
@@ -179,6 +179,7 @@ export default function CardConfig() {
   <input
     type="number"
     name={`field_${field.label}`}
+    min={0}
     value={formData[`field_${field.label}`] || 0}
     onChange={handleInputChange}
     className="border text-gray-700 border-gray-300 p-2 rounded-md w-full"
