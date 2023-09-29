@@ -2,6 +2,7 @@ import './globals.css'
 import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 import Provider from '@/context/AuthContext'
+import { useEffect } from 'react'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -15,6 +16,27 @@ export default function RootLayout({
 }: {
   children: React.ReactNode
 }) {
+
+  // useEffect(() => {
+  //   fetch('/api/auth/me', {
+  //     method: 'GET',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //       },
+  //       })
+  //   .then((res) => res.json())
+  //   .then((data) => {
+  //         console.log(data)
+  //       })
+  //   .catch((err) => {
+  //       console.log(err)
+  //       })
+  
+  //   return () => {
+      
+  //   }
+  // }, [])
+  
   return (
     <html lang="en">
       <body className={inter.className}>

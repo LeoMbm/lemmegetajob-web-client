@@ -42,6 +42,11 @@ model User {
   emailVerified DateTime?
   password         String    @db.VarChar(255)
   current_position String?   @db.VarChar(255)
+  current_company  String?   @db.VarChar(255)
+  current_location String?   @db.VarChar(255)
+  phone            String?   @db.VarChar(255)
+  description      String?   @db.Text
+  image            String?   @db.VarChar(255)
   create_time      DateTime  @default(now()) @db.Timestamp(6)
   update_time      DateTime? @db.Timestamp(6)
   accounts      Account[]

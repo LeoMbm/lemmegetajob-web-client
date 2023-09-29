@@ -80,9 +80,10 @@ export const TableJob = () => {
 
     
     return (
-<div className="relative overflow-x-auto shadow-md sm:rounded-lg">
-            <table className="w-full text-sm text-left text-gray-500 dark:text-gray-400">
-                <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
+        <>
+        <div className="overflow-x-auto">
+        <table className="w-full min-w-max text-sm text-left text-gray-500 dark:text-gray-400">
+          <thead className="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                     <tr>
                         <th scope="col" className="p-4">
                             <div className="flex items-center">
@@ -118,6 +119,15 @@ export const TableJob = () => {
                     </tr>
                 </thead>
                 <tbody>
+                    {loading && (
+                        <tr>
+                            <td colSpan={7} className="p-4">
+                                <div className="flex justify-center">
+                                    <Spinner className="w-6 h-6" />
+                                </div>
+                            </td>
+                        </tr>
+                    )}
                     {jobList.map((job, index) => (
                         <tr
                             key={index}
@@ -163,6 +173,7 @@ export const TableJob = () => {
                   ))}
               </tbody>
           </table>
+      </div>
           <nav className="flex items-center justify-between pt-4" aria-label="Table navigation">
               <span className="text-sm font-normal text-gray-500 dark:text-gray-400">Showing <span className="font-semibold text-gray-900 dark:text-white">1-25</span> of <span className="font-semibold text-gray-900 dark:text-white">{jobList.length}</span></span>
               <ul className="inline-flex -space-x-px text-sm h-8">
@@ -181,7 +192,7 @@ export const TableJob = () => {
                   </li>
               </ul>
           </nav>
-      </div>
+      </>
   );
 }
 
