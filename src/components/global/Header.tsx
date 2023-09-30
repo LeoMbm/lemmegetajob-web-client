@@ -1,17 +1,19 @@
 'use client';
 
-import { Avatar, Dropdown, Navbar } from 'flowbite-react';
+import { Avatar, Dropdown, Navbar, Spinner } from 'flowbite-react';
 import { useEffect, useRef, useState } from 'react';
 import SidebarMobile from './mobile/SidebarMobile';
 import { useSession } from 'next-auth/react';
+import { useUserData } from '@/lib/useUserData';
+import { User } from '@/types/user';
 
 export default function Header() {
 
     const [prevScrollPos, setPrevScrollPos] = useState(0);
     const [hiddenHeader, setHiddenHeader] = useState(false);
     const [isSidebarOpen, setSidebarOpen] = useState(false);
-    const session = useSession();
-    const email = session.data?.token?.email;
+    const {userData, error, isLoading } = useUserData()
+
     
     const toggleSidebar = () => {
         setSidebarOpen(!isSidebarOpen);
@@ -37,6 +39,8 @@ export default function Header() {
       };
     }, [prevScrollPos]);
     
+    const user: User = userData?.user
+
   return (
     <>
     <Navbar
@@ -69,10 +73,10 @@ export default function Header() {
         >
           <Dropdown.Header>
             <span className="block text-sm">
-              John Doe
+              {isLoading ? <Spinner size='xs' /> : user.first_name + ' ' + user.last_name}
             </span>
             <span className="block truncate text-sm font-medium">
-              {email}
+            {isLoading ? <Spinner size='xs'/> : user.email}
             </span>
           </Dropdown.Header>
           <Dropdown.Item href='/dashboard/profile'>

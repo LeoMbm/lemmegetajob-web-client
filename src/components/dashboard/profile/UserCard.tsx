@@ -1,22 +1,11 @@
 'use client'
 import { useUserData } from '@/lib/useUserData'
+import { User } from '@/types/user'
 import { Spinner } from 'flowbite-react'
 import { useSession } from 'next-auth/react'
 import React from 'react'
 
-type User = {
-  id: number,
-  first_name: string,
-  last_name: string,
-  email: string,
-  phone: string,
-  current_position: string,
-  current_company: string,
-  current_location: string,
-  description: string,
-  created_at: string,
-  updated_at: string
-}
+
 export const UserCard = () => {
     const session = useSession()
     const email = session?.data?.session?.user?.email
@@ -50,7 +39,7 @@ export const UserCard = () => {
     <div className="px-6 py-4">
         <h1 className="text-xl font-semibold text-gray-800 dark:text-white">{full_name}</h1>
 
-        <p className="py-2 text-gray-700 dark:text-gray-400">Full Stack maker & UI / UX Designer , love hip hop music Author of Building UI.</p>
+        <p className="py-2 text-gray-700 dark:text-gray-400">{user.description ? user.description : "Biography"}</p>
 
         <div className="flex items-center mt-4 text-gray-700 dark:text-gray-200">
             <svg aria-label="suitcase icon" className="w-6 h-6 fill-current" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">

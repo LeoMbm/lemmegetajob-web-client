@@ -7,13 +7,15 @@ import { ClearLogsButton } from '../ClearLogsButton';
 import { StopButton } from '../StopButton';
 import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { getStoredToken } from '@/lib/cookie';
-import { emit } from 'process';
 import { LogItem } from './LogItem';
+import { useUserData } from '@/lib/useUserData';
+import { User } from '@/types/user';
+import { Spinner } from 'flowbite-react';
 
 const LOG_URL = process.env.NEXT_PUBLIC_LOG_REALTIME_URL;
 
 export const LogView = () => {
+  const { userData, error, isLoading } = useUserData();
   const router = useRouter()
   const [logs, setLogs] = useState<string[]>([]);
   const scrollableContainerRef = useRef<HTMLDivElement>(null);
@@ -25,10 +27,17 @@ export const LogView = () => {
   const [message, setMessage] = useState<string | null>('');
   const session = useSession()
   const authToken = session.data?.backendToken;
-  const email = session.data?.token?.email;
-  // Remove all special characters from email address
-  const socket_email = email?.replace(/[^a-zA-Z0-9]/g, '');
-  console.log(socket_email);
+  if (isLoading) {
+    console.log("Loading");
+  } else if (error) {
+    console.log(error);
+  } 
+  else {
+
+    const user: User = userData?.user
+    const socket_email = user?.email.replace(/[^a-zA-Z0-9]/g, '');
+    console.log(socket_email);
+  }
   
   
   
@@ -49,22 +58,20 @@ export const LogView = () => {
     if (savedBotLaunched) {
       setBotLaunched(true);
     }
-
-    // ...
   }, []);
 
   useEffect(() => {
     localStorage.setItem('logs', JSON.stringify(logs));
     localStorage.setItem('diodeStatus', diodeStatus);
-
-    // ...
   }, [logs, diodeStatus]);
 
 
 
   useEffect(() => {
-    const scrollableContainer = scrollableContainerRef.current;
-    scrollableContainer.scrollTop = scrollableContainer.scrollHeight;
+    if (scrollableContainerRef.current) {
+      const scrollableContainer = scrollableContainerRef.current;
+      scrollableContainer.scrollTop = scrollableContainer.scrollHeight;
+    }
   }, [logs]);
 
 
@@ -229,19 +236,26 @@ export const LogView = () => {
       <ClearLogsButton handler={handleClearLogs} disabled={logs.length === 0 ? true : false} />
       </div>
       <div className="w-full h-full border rounded-lg overflow-hidden shadow-md mt-4">
-        <div className="flex flex-col-reverse h-96 overflow-y-auto" ref={scrollableContainerRef}>
-          <ScrollableFeed forceScroll={true}>
-            {logs.length === 0 ? (
-              <div className="flex items-center justify-center py-3 bg-gray-200 text-gray-600">
-                No logs
+          {isLoading ? (
+            <div className="flex items-center justify-center py-3 bg-gray-200 text-gray-600">
+              <Spinner size="md" />
               </div>
-            ) : (
-              logs.map((log, i) => (
-                <LogItem log={log} index={i} />
-              ))
-            )}
-          </ScrollableFeed>
+              ) : (
+              <div className="flex flex-col-reverse h-96 overflow-y-auto" ref={scrollableContainerRef}>
+                <ScrollableFeed forceScroll={true}>
+                {logs.length === 0 ? (
+                  <div className="flex items-center justify-center py-3 bg-gray-200 text-gray-600">
+                    No logs
+                  </div>
+                ) : (
+                  logs.map((log, i) => (
+                    <LogItem log={log} index={i} />
+                  ))
+                )}
+              </ScrollableFeed>
         </div>
+              )}
+  
       </div>
       <ToastFeedback message={message} status={diodeStatus} />
     </div>

@@ -14,8 +14,6 @@ export default function CardConfig() {
     const [isSaved, setIsSaved] = useState(false);
     const [showConfirmation, setShowConfirmation] = useState(false);
     const questionsPerPage = 6;
-
-    console.log(submittedCategories);
     
     useEffect(() => {
         const submitted = JSON.parse(localStorage.getItem('submittedCategories') || '{}');
@@ -63,7 +61,6 @@ export default function CardConfig() {
     
       localStorage.setItem(`submittedData_${modalContent}`, JSON.stringify(formData));
     
-      // Enregistrer les catégories soumises dans le localStorage
       const newSubmittedCategory = modalContent;
       let existingSubmittedCategories = JSON.parse(localStorage.getItem('submittedCategories') || '[]');
     

@@ -2,20 +2,8 @@
 import React from 'react'
 import { Checkbox, Spinner, Table } from 'flowbite-react';
 import Link from 'next/link';
-import { useSession } from 'next-auth/react';
-
-type Job = {
-    id: number,
-    position: string,
-    company: string,
-    location: string,
-    apply_link: string,
-    link_id: string,
-    applied: boolean,
-    applied_on: string,
-    added_on: string,
-    userId: string
-}
+import { Job } from '@/types/job';
+import PopUpModal from './ModalJob';
 
 
 
@@ -27,6 +15,18 @@ export const TableJob = () => {
     const perPage = 25;
     const [selectAll, setSelectAll] = React.useState(false);
     const [selectedItems, setSelectedItems] = React.useState<number[]>([]);
+    const [editingItemId, setEditingItemId] = React.useState<number | null>(null);
+    const [isModalOpen, setIsModalOpen] = React.useState(false);
+
+    const handleEditClick = (itemId: number) => {
+        setEditingItemId(itemId); // Définissez l'ID de l'élément que vous souhaitez éditer
+        setIsModalOpen(true); // Ouvrez le modal
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false); // Ferme le modal
+    };
+
 
     const handleSelectAllChange = () => {
         if (selectAll) {
@@ -57,7 +57,6 @@ export const TableJob = () => {
             .then((res) => res.json())
             .then((data) => {
                 setJobList(data);
-                console.log(data);
                 
             })
             .catch((err) => {
@@ -130,10 +129,10 @@ export const TableJob = () => {
                     )}
                     {jobList.map((job, index) => (
                         <tr
-                            key={index}
-                            className={`bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 ${
-                                selectedItems.includes(job.id) ? 'bg-green-100' : ''
-                            }`}
+                        key={index}
+                        className={`bg-white border-b dark:bg-gray-800 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-600 ${
+                            selectedItems.includes(job.id) ? 'bg-green-100' : ''
+                        }`}
                         >
                             <td className="w-4 p-4">
                                 <div className="flex items-center">
@@ -167,13 +166,16 @@ export const TableJob = () => {
                               {job.applied ? <Checkbox checked disabled/> : <Checkbox  disabled/>}
                           </td>
                           <td className="px-6 py-4">
-                              <a href="#" className="font-medium text-blue-600 dark:text-blue-500 hover:underline">Edit</a>
+                          <a className="font-medium text-blue-600 dark:text-blue-500 hover:underline" onClick={() => handleEditClick(job.id)}>Delete</a>
                           </td>
                       </tr>
                   ))}
               </tbody>
           </table>
       </div>
+      {isModalOpen && (
+          <PopUpModal isOpen={isModalOpen} onClose={closeModal} itemToEdit={jobList.find(job => job.id === editingItemId)} setJobList={setJobList} />
+        )}
           <nav className="flex items-center justify-between pt-4" aria-label="Table navigation">
               <span className="text-sm font-normal text-gray-500 dark:text-gray-400">Showing <span className="font-semibold text-gray-900 dark:text-white">1-25</span> of <span className="font-semibold text-gray-900 dark:text-white">{jobList.length}</span></span>
               <ul className="inline-flex -space-x-px text-sm h-8">
