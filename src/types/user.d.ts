@@ -10,4 +10,6 @@ export type User = {
     description: string,
     created_at: string,
     updated_at: string
+    emailVerified: boolean,
+    confirmationToken: string
   }

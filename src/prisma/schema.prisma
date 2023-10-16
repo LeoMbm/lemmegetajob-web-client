@@ -39,7 +39,8 @@ model User {
   first_name       String    @db.VarChar(255)
   last_name        String    @db.VarChar(255)
   email            String    @db.VarChar(255)
-  emailVerified DateTime?
+  emailVerified    Boolean   @default(false)
+  confirmationToken String?
   password         String    @db.VarChar(255)
   current_position String?   @db.VarChar(255)
   current_company  String?   @db.VarChar(255)
@@ -52,6 +53,7 @@ model User {
   accounts      Account[]
   sessions      Session[]
   jobs          Job[]
+  instances     Instance[]
   @@unique([email])
 }
 
@@ -77,4 +79,29 @@ model Job {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   @@index([userId, link_id], name: "unique_link_id_per_user")
   @@map(name: "jobs")   // Optionnel : renommer la table si nécessaire
+}
+
+model Instance {
+    id            String    @id @default(cuid())
+    namespace     String
+    status       String   @default("pending")
+    userId      String    // Clé étrangère vers l'utilisateur auquel l'instance est associée
+    create_time   DateTime  @default(now()) @db.Timestamp(6)
+    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    configurations InstanceConfiguration[]
+
+    @@map(name: "instances")   // Optionnel : renommer la table si nécessaire
+
+}
+
+model InstanceConfiguration {
+    id            String    @id @default(cuid())
+    instanceId    String
+    data         String
+    create_time   DateTime  @default(now()) @db.Timestamp(6)
+    update_time   DateTime? @db.Timestamp(6)
+    instance Instance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
+
+    @@map(name: "instance_configurations")   // Optionnel : renommer la table si nécessaire
+
 }

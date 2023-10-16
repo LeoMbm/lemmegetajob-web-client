@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import Loading from "@/app/dashboard/loading";
 import { getStoredToken } from "@/lib/cookie";
@@ -6,13 +6,13 @@ import { Spinner } from "flowbite-react";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
 
-
 const INITIAL_DATA = {
+  "Total Instances": "0",
   "Total Jobs": "0",
   "Total Companies": "0",
   "Total Applications": "0",
-  "Success": "0",
-  "Failure": "0",
+  Success: "0",
+  Failure: "0",
 };
 
 const Card = () => {
@@ -32,12 +32,14 @@ const Card = () => {
         setData((prev) => ({
           ...prev,
           "Total Jobs": String(jobs.length),
-          "Total Companies": String(new Set(jobs.map((job) => job.company)).size),
-        }))
+          "Total Companies": String(
+            new Set(jobs.map((job) => job.company)).size
+          ),
+        }));
         setLoading(false);
       })
       .catch((error) => {
-        console.error('Error:', error);
+        console.error("Error:", error);
         setLoading(false);
       });
   }, []);
@@ -71,5 +73,3 @@ const Card = () => {
 };
 
 export default Card;
-
-

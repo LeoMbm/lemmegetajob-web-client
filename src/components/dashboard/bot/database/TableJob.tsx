@@ -19,12 +19,12 @@ export const TableJob = () => {
     const [isModalOpen, setIsModalOpen] = React.useState(false);
 
     const handleEditClick = (itemId: number) => {
-        setEditingItemId(itemId); // Définissez l'ID de l'élément que vous souhaitez éditer
-        setIsModalOpen(true); // Ouvrez le modal
+        setEditingItemId(itemId);
+        setIsModalOpen(true);
     };
 
     const closeModal = () => {
-        setIsModalOpen(false); // Ferme le modal
+        setIsModalOpen(false);
     };
 
 
