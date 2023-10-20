@@ -19,7 +19,11 @@ export const IntegrationSettings = () => {
 
       <ButtonGroup className="flex-col" color="blue">
         {integrations.map((integration, i) => (
-          <Button className="mt-4 rounded-md w-52 flex items-center" disabled>
+          <Button
+            className="mt-4 rounded-md w-52 flex items-center"
+            disabled
+            key={i}
+          >
             {integration.icon ? (
               <Icon
                 as={integration.icon}

@@ -7,20 +7,20 @@ import { ClearLogsButton } from "../ClearLogsButton";
 import { StopButton } from "../StopButton";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { LogItem } from "./LogItem";
+import { LogApplyItem } from "./LogApplyItem";
 import { useUserData } from "@/lib/useUserData";
 import { User } from "@/types/user";
 import { Spinner } from "flowbite-react";
 
 const LOG_URL = process.env.NEXT_PUBLIC_LOG_REALTIME_URL;
 
-export const LogView = () => {
+export const LogApplyView = () => {
   const { userData, error, isLoading } = useUserData();
   const router = useRouter();
   const [logs, setLogs] = useState<string[]>([]);
   const scrollableContainerRef = useRef<HTMLDivElement>(null);
   const [socket, setSocket] = useState<WebSocket | null>(null);
-  const [botLaunched, setBotLaunched] = useState(false);
+  const [botApplyLaunch, setBotApplyLaunch] = useState(false);
   const [namespaces, setNamespaces] = useState<string | null>(null);
   const [deployementName, setDeployementName] = useState<string | null>(null);
   const [diodeStatus, setDiodeStatus] = useState("");
@@ -28,44 +28,8 @@ export const LogView = () => {
   const session = useSession();
   const authToken = session.data?.backendToken;
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-3 bg-gray-200 text-gray-600">
-        <Spinner size="md" />
-      </div>
-    );
+    console.log("Loading logs...");
   }
-  const user: User = userData?.user;
-  const socket_email = user?.email.replace(/[^a-zA-Z0-9]/g, "");
-  console.log(socket_email);
-
-  useEffect(() => {
-    const savedLogs = localStorage.getItem("logs");
-    if (savedLogs) {
-      setLogs(JSON.parse(savedLogs));
-    }
-
-    const savedDiodeStatus = localStorage.getItem("diodeStatus");
-    if (savedDiodeStatus) {
-      setDiodeStatus(savedDiodeStatus);
-    }
-
-    const savedBotLaunched = localStorage.getItem("botLaunched");
-    if (savedBotLaunched) {
-      setBotLaunched(true);
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem("logs", JSON.stringify(logs));
-    localStorage.setItem("diodeStatus", diodeStatus);
-  }, [logs, diodeStatus]);
-
-  useEffect(() => {
-    if (scrollableContainerRef.current) {
-      const scrollableContainer = scrollableContainerRef.current;
-      scrollableContainer.scrollTop = scrollableContainer.scrollHeight;
-    }
-  }, [logs]);
 
   const launchInstance = async () => {
     const headers = {
@@ -74,7 +38,9 @@ export const LogView = () => {
     const res = await fetch("/api/bot/launch", {
       method: "POST",
       headers,
-      body: JSON.stringify({ mode: "scraping" }),
+      body: JSON.stringify({
+        mode: "apply",
+      }),
     });
     const data = await res.json();
 
@@ -99,7 +65,9 @@ export const LogView = () => {
     const res = await fetch("/api/bot/stop", {
       method: "POST",
       headers,
-      body: JSON.stringify({ mode: "scraping" }),
+      body: JSON.stringify({
+        mode: "apply",
+      }),
     });
 
     const data = await res.json();
@@ -116,12 +84,12 @@ export const LogView = () => {
       if (response.status === 200) {
         console.log("Bot stopped successfully.");
         setMessage("Bot stopped successfully.");
-        setBotLaunched(false);
+        setBotApplyLaunch(false);
         setDiodeStatus("");
         setLogs([...logs, "Bot stopped successfully."]); // fixed spread argument
         localStorage.removeItem("logs");
         localStorage.removeItem("diodeStatus");
-        localStorage.removeItem("botLaunched");
+        localStorage.removeItem("botApplyLaunch");
       }
       if (response.message.status === 401) {
         setMessage("You are not authorized to perform this action.");
@@ -145,8 +113,8 @@ export const LogView = () => {
       if (response.status === 200) {
         console.log("Bot launched successfully let's go !");
         setDiodeStatus("success");
-        setBotLaunched(true);
-        localStorage.setItem("botLaunched", "true");
+        setBotApplyLaunch(true);
+        localStorage.setItem("botApplyLaunch", "true");
         setMessage("Bot launched successfully");
       } else if (response.status === 401) {
         setDiodeStatus("failure");
@@ -176,40 +144,70 @@ export const LogView = () => {
     console.log("Logs cleared.");
   };
 
-  // useEffect(() => {
-  //   if (botLaunched && socket_email) {
-  //     const socket = new WebSocket(`${LOG_URL}/${socket_email}`);
+  useEffect(() => {
+    const savedLogs = localStorage.getItem("logs");
+    const savedDiodeStatus = localStorage.getItem("diodeStatus");
+    const savedBotApplyLaunch = localStorage.getItem("botApplyLaunch");
 
-  //     setSocket(socket);
+    if (savedLogs) {
+      setLogs(JSON.parse(savedLogs));
+    }
+    if (savedDiodeStatus) {
+      setDiodeStatus(savedDiodeStatus);
+    }
+    if (savedBotApplyLaunch) {
+      setBotApplyLaunch(true);
+    }
+  }, []);
 
-  //     socket.onopen = () => {
-  //       console.log("WebSocket connection established.");
-  //     };
+  useEffect(() => {
+    localStorage.setItem("logs", JSON.stringify(logs));
+    localStorage.setItem("diodeStatus", diodeStatus);
+  }, [logs, diodeStatus]);
 
-  //     socket.onmessage = (event) => {
-  //       const message = event.data;
-  //       console.log("Received message:", message);
+  useEffect(() => {
+    if (scrollableContainerRef.current) {
+      const scrollableContainer = scrollableContainerRef.current;
+      scrollableContainer.scrollTop = scrollableContainer.scrollHeight;
+    }
+  }, [logs]);
 
-  //       if (message) {
-  //         setLogs((prevLogs) => [...prevLogs, message]);
-  //       } else if (message.error) {
-  //         console.error("Error:", message.error);
-  //       }
-  //     };
+  useEffect(() => {
+    if (botApplyLaunch) {
+      const user: User = userData?.user;
+      const socket_email = user?.email.replace(/[^a-zA-Z0-9]/g, "");
+      const socket = new WebSocket(`${LOG_URL}/${socket_email}`);
 
-  //     socket.onclose = () => {
-  //       console.log("WebSocket connection closed.");
-  //       setDiodeStatus("");
-  //       setBotLaunched(false);
-  //       localStorage.removeItem("botLaunched");
-  //       setSocket(null);
-  //     };
+      setSocket(socket);
 
-  //     return () => {
-  //       socket.close();
-  //     };
-  //   }
-  // }, [botLaunched]);
+      socket.onopen = () => {
+        console.log("WebSocket connection established.");
+      };
+
+      socket.onmessage = (event) => {
+        const message = event.data;
+        console.log("Received message:", message);
+
+        if (message) {
+          setLogs((prevLogs) => [...prevLogs, message]);
+        } else if (message.error) {
+          console.error("Error:", message.error);
+        }
+      };
+
+      socket.onclose = () => {
+        console.log("WebSocket connection closed.");
+        setDiodeStatus("");
+        setBotApplyLaunch(false);
+        localStorage.removeItem("botApplyLaunch");
+        setSocket(null);
+      };
+
+      return () => {
+        socket.close();
+      };
+    }
+  }, [botApplyLaunch, userData]);
 
   // FAKE PART
   const fakeLaunch = async () => {
@@ -226,50 +224,52 @@ export const LogView = () => {
     };
   };
 
-  useEffect(() => {
-    // Fake logs
-    if (botLaunched) {
-      const fakeLogs = [
-        "Bot launched successfully",
-        "Loading configuration...",
-        "Logging in...",
-        "Logged in successfully",
-        "Searching job for Backend Developer in Brussels...",
-        "Job scraped successfully 1",
-        "Job scraped successfully 2",
-        "Job scraped successfully 3",
-        "Job scraped successfully 4",
-        "Job scraped successfully 5",
-        "Job scraped successfully 6",
-        "Job scraped successfully 7",
-        "Job scraped successfully 8",
-        "Job scraped successfully 9",
-        "Job scraped successfully 10",
-        "Job scraped successfully 11",
-        "Job scraped successfully 12",
-        "Job scraped successfully 13",
-        "Job scraped successfully 14",
-        "Job scraped successfully 15",
-        "No more jobs found",
-        "Jobs saved in database",
-        "Bot stopped successfully",
-      ];
-      let logIndex = 0;
+  // useEffect(() => {
+  //   // Fake logs
+  //   if (botApplyLaunch) {
+  //     const fakeLogs = [
+  //       "Bot launched successfully",
+  //       "Retrieve 100 jobs..",
+  //       "Logging in...",
+  //       "Logged in successfully",
+  //       "Applying to Job 1",
+  //       "Applying to Job 2",
+  //       "Applying to Job 3",
+  //       "Applying to Job 4",
+  //       "Applying to Job 5",
+  //       "Applying to Job 6",
+  //       "Applying to Job 7",
+  //       "Applying to Job 8",
+  //       "Applying to Job 9",
+  //       "Applying to Job 10",
+  //       "Applying to Job 11",
+  //       "Applying to Job 12",
+  //       "Applying to Job 13",
+  //       "Applying to Job 14",
+  //       "Applying to Job 15",
+  //       "Applying to Job 16",
+  //       "Applying to Job 17",
+  //       "Applying to Job 18",
+  //       "Applying to Job 19",
+  //       "Applying to Job 20",
+  //       "Applying to Job 21",
+  //     ];
+  //     let logIndex = 0;
 
-      const logIntervalId = setInterval(() => {
-        if (logIndex < fakeLogs.length) {
-          setLogs((prevLogs) => [...prevLogs, fakeLogs[logIndex]]);
-          logIndex++;
-        } else {
-          clearInterval(logIntervalId); // Arrêtez l'intervalle lorsque tous les logs ont été ajoutés
-        }
-      }, 3000);
+  //     const logIntervalId = setInterval(() => {
+  //       if (logIndex < fakeLogs.length) {
+  //         setLogs((prevLogs) => [...prevLogs, fakeLogs[logIndex]]);
+  //         logIndex++;
+  //       } else {
+  //         clearInterval(logIntervalId);
+  //       }
+  //     }, 3000);
 
-      return () => {
-        clearInterval(logIntervalId); // Nettoyez l'intervalle lorsque le bot est arrêté
-      };
-    }
-  }, [botLaunched]);
+  //     return () => {
+  //       clearInterval(logIntervalId); // Nettoyez l'intervalle lorsque le bot est arrêté
+  //     };
+  //   }
+  // }, [botApplyLaunch]);
 
   return (
     <div>
@@ -297,7 +297,7 @@ export const LogView = () => {
                   No logs
                 </div>
               ) : (
-                logs.map((log, i) => <LogItem log={log} index={i} />)
+                logs.map((log, i) => <LogApplyItem log={log} index={i} />)
               )}
             </ScrollableFeed>
           </div>
