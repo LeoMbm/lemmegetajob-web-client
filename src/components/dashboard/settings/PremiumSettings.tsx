@@ -7,7 +7,7 @@ import { useState } from "react";
 export default function PremiumSettings() {
   const [premium, setPremium] = useState<{}[]>(appConfig.plans);
 
-  console.log(premium);
+  // console.log(premium);
 
   return (
     <Accordion>

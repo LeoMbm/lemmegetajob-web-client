@@ -53,8 +53,21 @@ model User {
   accounts      Account[]
   sessions      Session[]
   jobs          Job[]
-  instances     Instance[]
+  rooms Rooms[]
   @@unique([email])
+}
+
+model Rooms { 
+  id String @id @default(cuid())
+  name String @db.VarChar(255)
+  created_at DateTime @default(now()) @db.Timestamp(6)
+  instances Instance[]
+  userId      String   
+  dailyExecutionLimit Float? @default(3600.00)
+  monthlyExecutionLimit Float? @default(108000.00)
+  currentExecutionLimit Float? @default(0.00)
+  timezone String? @default("Europe/Brussels")
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model VerificationToken {
@@ -85,13 +98,11 @@ model Instance {
     id            String    @id @default(cuid())
     namespace     String
     status       String   @default("pending")
-    userId      String    // Clé étrangère vers l'utilisateur auquel l'instance est associée
+    roomId      String   
     create_time   DateTime  @default(now()) @db.Timestamp(6)
-    user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+    room Rooms @relation(fields: [roomId], references: [id], onDelete: Cascade)
     configurations InstanceConfiguration[]
-
-    @@map(name: "instances")   // Optionnel : renommer la table si nécessaire
-
+    @@map(name: "instances")
 }
 
 model InstanceConfiguration {
@@ -101,7 +112,17 @@ model InstanceConfiguration {
     create_time   DateTime  @default(now()) @db.Timestamp(6)
     update_time   DateTime? @db.Timestamp(6)
     instance Instance @relation(fields: [instanceId], references: [id], onDelete: Cascade)
-
     @@map(name: "instance_configurations")   // Optionnel : renommer la table si nécessaire
 
+}
+
+model Plans {
+  id String @id @default(cuid())
+  name String  @default("Standard")
+  monthlyPrice Float @default(0.00)
+  dailyExecutionLimit Float @default(3600.00)
+  monthlyExecutionLimit Float @default(108000.00)
+  isUpgradable Boolean @default(true)
+  started_at DateTime
+  
 }

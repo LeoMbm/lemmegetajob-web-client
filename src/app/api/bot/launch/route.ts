@@ -1,6 +1,7 @@
 import axios from "axios";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../auth/[...nextauth]/options";
+import { prisma } from "@/lib/db";
 
 export async function POST(req: Request, res: Response) {
   if (req.method === "POST") {
@@ -28,19 +29,38 @@ export async function POST(req: Request, res: Response) {
           }
         );
       }
-    
 
       const user = session.user;
       console.log(user);
       const response = await axios.post(
         `${process.env.BASE_API_URL}/launch-bot`,
         {
-          mode
+          mode,
         },
         config
       );
 
       if (response.status === 200) {
+        const rooms = await prisma.rooms.findFirst({
+          where: {
+            user: {
+              id: user.id,
+            },
+          },
+        });
+        if (!rooms) {
+          console.log("No rooms found");
+          // await prisma.rooms.create({
+          //   data: {
+
+          //     user: {
+          //       connect: {
+          //         id: user.id
+          //       }
+          //     }
+          //   }})
+        }
+
         return new Response(JSON.stringify(response.data), {
           status: 200,
         });

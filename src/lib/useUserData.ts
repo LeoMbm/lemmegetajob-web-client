@@ -1,6 +1,6 @@
-'use client'
-import { useEffect, useState } from 'react';
-import { fetchUserData } from './fetchUserData';
+"use client";
+import { useEffect, useState } from "react";
+import { fetchUserData } from "./fetchUserData";
 
 export const useUserData = () => {
   const [userData, setUserData] = useState(null);

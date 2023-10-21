@@ -12,7 +12,7 @@ import { useUserData } from "@/lib/useUserData";
 import { User } from "@/types/user";
 import { Spinner } from "flowbite-react";
 
-const LOG_URL = process.env.NEXT_PUBLIC_LOG_REALTIME_URL;
+const LOG_URL = process.env.NEXT_PUBLIC_LOG_SCRAP_REALTIME_URL;
 
 export const LogView = () => {
   const { userData, error, isLoading } = useUserData();
@@ -28,11 +28,7 @@ export const LogView = () => {
   const session = useSession();
   const authToken = session.data?.backendToken;
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center py-3 bg-gray-200 text-gray-600">
-        <Spinner size="md" />
-      </div>
-    );
+    console.log("Loading logs");
   }
   const user: User = userData?.user;
   const socket_email = user?.email.replace(/[^a-zA-Z0-9]/g, "");
@@ -178,7 +174,7 @@ export const LogView = () => {
 
   // useEffect(() => {
   //   if (botLaunched && socket_email) {
-  //     const socket = new WebSocket(`${LOG_URL}/${socket_email}`);
+  //     const socket = new WebSocket(`${LOG_URL}/${socket_email}/scraping`);
 
   //     setSocket(socket);
 

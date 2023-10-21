@@ -1,11 +1,13 @@
 "use client";
 
-import { Avatar, Dropdown, Navbar, Spinner } from "flowbite-react";
+import { Dropdown, Navbar, Spinner } from "flowbite-react";
 import { useEffect, useRef, useState } from "react";
 import SidebarMobile from "./mobile/SidebarMobile";
 import { useSession } from "next-auth/react";
 import { useUserData } from "@/lib/useUserData";
 import { User } from "@/types/user";
+import { AvatarBadge, Avatar } from "@chakra-ui/react";
+import { Tooltip } from "@chakra-ui/react";
 
 export default function Header() {
   const [prevScrollPos, setPrevScrollPos] = useState(0);
@@ -38,6 +40,7 @@ export default function Header() {
   }, [prevScrollPos]);
 
   const user: User = userData?.user;
+  console.log(user);
 
   return (
     <>
@@ -62,7 +65,23 @@ export default function Header() {
             <Dropdown
               inline
               label={
-                <Avatar alt="User settings" bordered color="gray" rounded />
+                <Avatar size="md">
+                  {user?.rooms.length > 0 ? (
+                    <Tooltip
+                      label={"Connected to " + user.rooms[0].name}
+                      placement="auto"
+                    >
+                      <AvatarBadge boxSize="1em" bg="green.500" />
+                    </Tooltip>
+                  ) : (
+                    <Tooltip
+                      label="You are not connected to any room yet"
+                      placement="auto"
+                    >
+                      <AvatarBadge boxSize="1em" bg="red.500" />
+                    </Tooltip>
+                  )}
+                </Avatar>
               }
             >
               <Dropdown.Header>

@@ -12,7 +12,7 @@ import { useUserData } from "@/lib/useUserData";
 import { User } from "@/types/user";
 import { Spinner } from "flowbite-react";
 
-const LOG_URL = process.env.NEXT_PUBLIC_LOG_REALTIME_URL;
+const LOG_URL = process.env.NEXT_PUBLIC_LOG_APPLY_REALTIME_URL;
 
 export const LogApplyView = () => {
   const { userData, error, isLoading } = useUserData();
@@ -176,7 +176,7 @@ export const LogApplyView = () => {
     if (botApplyLaunch) {
       const user: User = userData?.user;
       const socket_email = user?.email.replace(/[^a-zA-Z0-9]/g, "");
-      const socket = new WebSocket(`${LOG_URL}/${socket_email}`);
+      const socket = new WebSocket(`${LOG_URL}/${socket_email}/apply`);
 
       setSocket(socket);
 
