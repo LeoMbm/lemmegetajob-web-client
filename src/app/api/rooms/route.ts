@@ -34,7 +34,7 @@ export async function POST(req: Request, res: Response) {
       console.log(response);
 
       if (response.status === 200) {
-        const rooms = await prisma.rooms.findFirst({
+        let rooms = await prisma.rooms.findFirst({
           where: {
             user: {
               id: user.sub,
@@ -43,7 +43,7 @@ export async function POST(req: Request, res: Response) {
         });
         if (!rooms) {
           console.log("No rooms found");
-          await prisma.rooms.create({
+          rooms = await prisma.rooms.create({
             data: {
               name: room_name,
               user: {
@@ -54,7 +54,12 @@ export async function POST(req: Request, res: Response) {
             },
           });
         }
-        return new Response(JSON.stringify(rooms, response.data), {
+
+        const body = {
+          rooms: rooms,
+          data: response.data,
+        };
+        return new Response(JSON.stringify(body), {
           status: 200,
         });
       } else {
@@ -116,6 +121,63 @@ export async function DELETE(req: NextRequest, res: NextResponse) {
             id: roomId,
           },
         });
+        return new Response(JSON.stringify(response.data), {
+          status: 200,
+        });
+      } else {
+        return new Response(JSON.stringify(response.data), {
+          status: response.status,
+        });
+      }
+    } catch (error) {
+      return new Response(JSON.stringify({ message: error }), {
+        status: 500,
+      });
+    }
+  } else {
+    return new Response(JSON.stringify({ message: "Not Allowed" }), {
+      status: 405,
+    });
+  }
+}
+
+export async function GET(req: NextRequest, res: NextResponse) {
+  if (req.method === "GET") {
+    const bearerToken = req.headers.get("Authorization")?.split(" ")[1];
+    const config = {
+      headers: {
+        Authorization: `Bearer ${bearerToken}`,
+      },
+    };
+
+    try {
+      const session = await getServerSession({ req, ...authOptions });
+      if (!session) {
+        return new Response(JSON.stringify({ message: "Not Authorized" }), {
+          status: 401,
+        });
+      }
+      const roomId = req.nextUrl.searchParams.get("roomId");
+      if (!roomId) {
+        return new Response(JSON.stringify({ message: "No roomId" }), {
+          status: 400,
+        });
+      }
+      const data = await prisma.rooms.findUnique({
+        where: {
+          id: roomId,
+        },
+      });
+      if (!data) {
+        return new Response(JSON.stringify({ message: "Room not found" }), {
+          status: 404,
+        });
+      }
+      const response = await axios.get(
+        `${process.env.BASE_API_URL}/rooms/${data.name}`,
+        config
+      );
+      if (response.status === 200) {
         return new Response(JSON.stringify(response.data), {
           status: 200,
         });

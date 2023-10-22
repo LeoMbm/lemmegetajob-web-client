@@ -54,6 +54,15 @@ export async function POST(req: NextRequest) {
       create_time: uniqueToken.createdAt,
     },
   });
+  await prisma.plans.create({
+    data: {
+      user: {
+        connect: {
+          id: user.id,
+        },
+      },
+    },
+  });
   await sendEmail(email, first_name, url_confirmation);
   return new NextResponse(JSON.stringify({ user }), { status: 200 });
 }

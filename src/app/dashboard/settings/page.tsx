@@ -2,6 +2,7 @@ import { FormUpdate } from "@/components/dashboard/settings/FormUpdate";
 import { IntegrationSettings } from "@/components/dashboard/settings/IntegrationSettings";
 import PremiumSettings from "@/components/dashboard/settings/PremiumSettings";
 import { RoomSettings } from "@/components/dashboard/settings/RoomSettings";
+import { BillingSettings } from "@/components/dashboard/settings/billing/BillingSettings";
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
 export default function Page() {
   return (
@@ -15,9 +16,9 @@ export default function Page() {
         >
           <TabList>
             <Tab>User Settings</Tab>
+            <Tab>Billing</Tab>
             <Tab>Rooms</Tab>
             <Tab>Integration</Tab>
-            <Tab>Billing</Tab>
             <Tab isDisabled>Beta</Tab>
             <Tab isDisabled>Beta</Tab>
             <Tab isDisabled>Beta</Tab>
@@ -27,6 +28,9 @@ export default function Page() {
               <FormUpdate />
             </TabPanel>
             <TabPanel>
+              <BillingSettings />
+            </TabPanel>
+            <TabPanel>
               <RoomSettings />
             </TabPanel>
             <TabPanel>
@@ -34,18 +38,6 @@ export default function Page() {
             </TabPanel>
           </TabPanels>
         </Tabs>
-        {/* <div
-          className="settings-container"
-          style={{ maxHeight: "850px", overflowY: "auto" }}
-        >
-          <FormUpdate />
-          <div className="w-full border-t border-gray-200"></div>
-          <RoomSettings />
-          <div className="w-full border-t border-gray-200"></div>
-          <PremiumSettings />
-          <div className="w-full border-t border-gray-200"></div>
-          <IntegrationSettings />
-        </div> */}
       </div>
     </div>
   );

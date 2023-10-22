@@ -12,12 +12,25 @@ import {
   IconButton,
   useDisclosure,
   ModalOverlay,
+  Box,
+  List,
+  ListItem,
+  ListIcon,
+} from "@chakra-ui/react";
+import {
+  Accordion,
+  AccordionItem,
+  AccordionButton,
+  AccordionPanel,
+  AccordionIcon,
 } from "@chakra-ui/react";
 import { useUserData } from "@/lib/useUserData";
 import ToastMessage from "@/components/global/alert/Toast";
 import { useSession } from "next-auth/react";
 import { DeleteRoom } from "./modal/DeleteRoom";
 import { Room } from "@/types/room";
+import { MdCheckCircle } from "react-icons/md";
+import { DeleteIcon, EmailIcon } from "@chakra-ui/icons";
 export const RoomSettings = () => {
   const { userData, error, isLoading } = useUserData();
   const [creating, setCreating] = useState(false);
@@ -37,6 +50,7 @@ export const RoomSettings = () => {
   );
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [overlay, setOverlay] = React.useState(<OverlayOne />);
+  const [roomData, setRoomData] = useState<{}>({});
 
   const handleCreate = async () => {
     setCreating(true);
@@ -52,18 +66,35 @@ export const RoomSettings = () => {
       console.log(data);
       setRooms((prevRooms) => [...prevRooms, data.rooms]);
       setStatus("success");
-      setMessage(data.message);
+      setMessage(data.data.message);
       setCreating(false);
     } else {
       setStatus("error");
-      setMessage(data.message);
+      setMessage(data.data.message);
       setCreating(false);
+    }
+  };
+  const getRoomsData = async (roomId) => {
+    const headers = {
+      Authorization: `Bearer ${authToken}`,
+    };
+    const res = await fetch(`/api/rooms?roomId=${roomId}`, {
+      method: "GET",
+      headers,
+    });
+    const data = await res.json();
+    if (res.status === 200) {
+      console.log(data);
+      setRoomData(data.details);
     }
   };
 
   useEffect(() => {
     if (user) {
       setRooms(user.rooms);
+      if (user.rooms.length > 0) {
+        getRoomsData(user.rooms[0].id);
+      }
     }
   }, [user]);
 
@@ -71,58 +102,90 @@ export const RoomSettings = () => {
     <>
       {message && status && (
         <div className="flex items-center justify-center mt-6">
-          <ToastMessage
-            message={message}
-            status={status}
-            onClose={() => false}
-          />
+          <ToastMessage message={message} status={status} onClose={onClose} />
         </div>
       )}
       <Stack spacing="4" width="90%" margin="auto">
         {isLoading && <Text>Loading...</Text>}
-
-        {user && rooms.length > 0 ? (
-          rooms.map((room) => (
-            <Card
-              key={room.id}
-              size="sm"
-              backgroundColor="gray.100"
-              textColor="black"
-              className="cursor-pointer"
-              _hover={{
-                backgroundColor: "gray.200",
-              }}
-              onClick={() => {
-                setOverlay(<OverlayOne />);
-                onOpen();
-              }}
+        <Accordion allowToggle>
+          {user && rooms.length > 0 ? (
+            rooms.map((room) => (
+              <>
+                <AccordionItem>
+                  <h2>
+                    <AccordionButton>
+                      <Box as="span" flex="1" textAlign="left">
+                        {room.name}
+                      </Box>
+                      <AccordionIcon />
+                    </AccordionButton>
+                  </h2>
+                  <AccordionPanel pb={4}>
+                    <List spacing={3}>
+                      {Object.keys(room).map((key, value) => (
+                        <ListItem key={key}>
+                          <ListIcon as={MdCheckCircle} color="green.500" />
+                          {key}: {room[key]}
+                        </ListItem>
+                      ))}
+                      <Box>
+                        <IconButton
+                          variant="outline"
+                          colorScheme="red"
+                          aria-label="Delete Room"
+                          icon={<DeleteIcon />}
+                          onClick={() => {
+                            setOverlay(<OverlayOne />);
+                            onOpen();
+                          }}
+                        />
+                      </Box>
+                    </List>
+                  </AccordionPanel>
+                </AccordionItem>
+                <DeleteRoom
+                  overlay={overlay}
+                  isOpen={isOpen}
+                  onClose={onClose}
+                  room={room}
+                  roomData={roomData}
+                />
+              </>
+              // <Card
+              //   key={room?.id}
+              //   size="sm"
+              //   backgroundColor="gray.100"
+              //   textColor="black"
+              //   className="cursor-pointer"
+              //   _hover={{
+              //     backgroundColor: "gray.300",
+              //   }}
+              //   onClick={() => {
+              //     setOverlay(<OverlayOne />);
+              //     onOpen();
+              //   }}
+              // >
+              //   <CardHeader>
+              //     <Heading size="md">Room: {room?.name}</Heading>
+              //   </CardHeader>
+              //   <CardBody>
+              //     <Text>Status: Active</Text>
+              //     <Text>Created At: {date}</Text>
+              //   </CardBody>
+              // </Card>
+            ))
+          ) : (
+            <Button
+              onClick={handleCreate}
+              size="md"
+              colorScheme="blue"
+              color="blue.500"
+              isLoading={creating}
             >
-              <CardHeader>
-                <Heading size="md">Room: {room.name}</Heading>
-              </CardHeader>
-              <CardBody>
-                <Text>Status: Active</Text>
-                <Text>Created At: {date}</Text>
-              </CardBody>
-              <DeleteRoom
-                overlay={overlay}
-                isOpen={isOpen}
-                onClose={onClose}
-                room={room}
-              />
-            </Card>
-          ))
-        ) : (
-          <Button
-            onClick={handleCreate}
-            size="md"
-            colorScheme="blue"
-            color="blue.500"
-            isLoading={creating}
-          >
-            Create you first room
-          </Button>
-        )}
+              Create you first room
+            </Button>
+          )}
+        </Accordion>
       </Stack>
     </>
   );

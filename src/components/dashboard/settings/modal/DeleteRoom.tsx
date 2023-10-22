@@ -29,7 +29,7 @@ import {
 import { MdCheckCircle } from "react-icons/md";
 import ToastMessage from "@/components/global/alert/Toast";
 import { useSession } from "next-auth/react";
-export const DeleteRoom = ({ overlay, isOpen, onClose, room }) => {
+export const DeleteRoom = ({ overlay, isOpen, onClose, room, roomData }) => {
   const [onDelete, setOnDelete] = useState(false);
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState("");
@@ -71,6 +71,8 @@ export const DeleteRoom = ({ overlay, isOpen, onClose, room }) => {
       }
     }
   };
+
+  console.log(roomData);
   return (
     <>
       <Modal

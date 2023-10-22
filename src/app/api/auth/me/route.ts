@@ -20,9 +20,9 @@ export async function GET(req: NextRequest) {
     },
     include: {
       rooms: true,
+      plans: true,
     },
   });
-  // Remove password from user object
   delete user.password;
   // Return user
 
