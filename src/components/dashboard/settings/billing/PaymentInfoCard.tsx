@@ -22,7 +22,10 @@ import { TbStarsFilled } from "react-icons/tb";
 import { AddIcon } from "@chakra-ui/icons";
 import { loadStripe } from "@stripe/stripe-js";
 
-export const PaymentInfoCard = () => {
+export const PaymentInfoCard = ({ data }) => {
+  const [user, setUser] = useState(data);
+  const [loading, setLoading] = useState(false);
+  const [disabled, setDisabled] = useState(false);
   const purchaseNow = async () => {
     try {
       const response = await fetch("/api/create-payment", {
@@ -64,7 +67,7 @@ export const PaymentInfoCard = () => {
               onClick={purchaseNow}
             >
               <Icon as={AddIcon} className="w-4 h-4 mr-2 flex-shrink-0" />
-              Add
+              {user.isPro ? "Update" : "Add"}
             </Button>
           </Flex>
         </CardBody>

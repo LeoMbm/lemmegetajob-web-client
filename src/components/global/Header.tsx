@@ -24,11 +24,11 @@ import { CloseIcon, HamburgerIcon } from "@chakra-ui/icons";
 import { Spinner } from "@chakra-ui/react";
 import SidebarMobile from "./mobile/SidebarMobile";
 import { useRouter } from "next/navigation";
-export default function Header() {
+export default function Header({ user }) {
   const [prevScrollPos, setPrevScrollPos] = useState(0);
   const [hiddenHeader, setHiddenHeader] = useState(false);
   const [isSidebarOpen, setSidebarOpen] = useState(false);
-  const { userData, error, isLoading } = useUserData();
+  // const { userData, error, isLoading } = useUserData();
   const router = useRouter();
   const { colorMode, toggleColorMode } = useColorMode();
 
@@ -56,8 +56,7 @@ export default function Header() {
     };
   }, [prevScrollPos]);
 
-  const user: User = userData?.user;
-  console.log(user);
+  // const user: User = userData?.user;
 
   return (
     <>
@@ -88,17 +87,11 @@ export default function Header() {
           </Box>
         </Link>
         <Box display="flex" alignItems="center" className="mobile:hidden">
-          <Switch
-            colorScheme="blue"
-            size="lg"
-            mr="1em"
-            onClick={toggleColorMode}
-          />
           <Menu>
             <Tooltip
               label={
                 user?.rooms.length > 0
-                  ? "Connected to " + user.rooms[0].name
+                  ? "Connected to " + user?.rooms[0].name
                   : "You are not connected to any room yet"
               }
               placement="auto"
@@ -116,23 +109,23 @@ export default function Header() {
             <MenuList>
               <MenuItem cursor="default">
                 <Box display="flex" flexDir="column" alignItems="flex-start">
-                  {isLoading ? (
+                  {/* {isLoading ? (
                     <Spinner size="xs" />
-                  ) : (
-                    <>
-                      <Text
-                        fontSize="sm"
-                        fontWeight="medium"
-                        whiteSpace="nowrap"
-                        display="block"
-                      >
-                        {user.first_name + " " + user.last_name}
-                      </Text>
-                      <Text fontSize="sm" whiteSpace="nowrap" display="block">
-                        {user.email}
-                      </Text>
-                    </>
-                  )}
+                  ) : ( */}
+                  <>
+                    <Text
+                      fontSize="sm"
+                      fontWeight="medium"
+                      whiteSpace="nowrap"
+                      display="block"
+                    >
+                      {user?.first_name + " " + user?.last_name}
+                    </Text>
+                    <Text fontSize="sm" whiteSpace="nowrap" display="block">
+                      {user?.email}
+                    </Text>
+                  </>
+                  {/* )} */}
                 </Box>
               </MenuItem>
               <MenuItem as="a" href="/dashboard/profile">
@@ -171,7 +164,7 @@ export default function Header() {
         }`}
       >
         {/* Le contenu de votre SidebarMobile */}
-        <SidebarMobile isSidebarOpen={isSidebarOpen} />
+        <SidebarMobile isPro={user?.isPro} isSidebarOpen={isSidebarOpen} />
       </Box>
     </>
   );

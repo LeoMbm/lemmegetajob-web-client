@@ -1,6 +1,8 @@
+import { Product } from "@/types/products";
 import { User } from "@/types/user";
 import crypto from "crypto";
 import * as nodemailer from "nodemailer";
+import { stripe } from "@/lib/stripe";
 
 const EMAIL_FROM = process.env.EMAIL_FROM;
 
@@ -76,4 +78,28 @@ export const sendEmail = async (
   } catch (error) {
     return { ok: false, msg: "Failed to send email" };
   }
+};
+
+export const parseProducts = async (products: any) => {
+  const response = [];
+  for (let i = 0; i < products.length; i++) {
+    const details: Product = {
+      id: "",
+      name: "",
+      description: "",
+      features: [],
+      price: 0,
+    };
+    const price = await stripe.prices.retrieve(products[i].default_price);
+    details.id = products[i].id;
+    details.name = products[i].name;
+    details.description = products[i].description;
+    details.features = products[i].features;
+    details.price = price?.unit_amount / 100;
+    details.line_items = products[i];
+    response.push(details);
+  }
+  const sortedResponse = response.sort((a, b) => b.price - a.price).reverse();
+
+  return sortedResponse;
 };

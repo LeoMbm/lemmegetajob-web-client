@@ -10,7 +10,6 @@ import {
 export async function POST(req: NextRequest) {
   const { email, first_name, last_name, password, phone, position } =
     await req.json();
-  console.log(email, first_name, last_name, password, phone, position);
 
   if (!first_name || !first_name || !email || !password || !phone) {
     return new NextResponse(JSON.stringify({ error: "Missing fields" }), {

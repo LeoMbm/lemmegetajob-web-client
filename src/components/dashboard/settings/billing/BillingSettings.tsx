@@ -4,24 +4,21 @@ import { BillingPlanCard } from "./BillingPlanCard";
 import { useUserData } from "@/lib/useUserData";
 import { Button, Grid, GridItem, Spinner } from "@chakra-ui/react";
 import { PaymentInfoCard } from "./PaymentInfoCard";
+import { checkPlans } from "@/lib/subscription";
+import { usePlanData } from "@/lib/usePlanData";
 
-export const BillingSettings = () => {
-  const { userData, error, isLoading } = useUserData();
+export const BillingSettings = async ({ user }) => {
   return (
     <div>
-      {isLoading ? (
-        <Spinner size="lg" />
-      ) : (
-        <>
-          <BillingPlanCard data={userData} />
-          <Grid templateColumns="repeat(2, 1fr)" gap={6} mt="4">
-            <GridItem w="100%">
-              <PaymentInfoCard />
-            </GridItem>
-            <GridItem w="100%" h="10" bg="blue.500" />
-          </Grid>
-        </>
-      )}
+      <>
+        <BillingPlanCard data={user} />
+        <Grid templateColumns="repeat(2, 1fr)" gap={6} mt="4">
+          <GridItem w="100%">
+            <PaymentInfoCard data={user} />
+          </GridItem>
+          <GridItem w="100%" h="10" bg="blue.500" />
+        </Grid>
+      </>
     </div>
   );
 };

@@ -13,4 +13,6 @@ export type User = {
   emailVerified: boolean;
   confirmationToken: string;
   rooms: Room[];
+  plans: Plan[];
+  isPro: boolean;
 };

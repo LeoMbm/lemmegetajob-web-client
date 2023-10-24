@@ -37,8 +37,8 @@ const FormTextArea = ({ label, id, ...rest }) => (
     </label>
   </div>
 );
-export const FormUpdate = () => {
-  const { userData, error, isLoading } = useUserData();
+export const FormUpdate = ({ user }) => {
+  // const { userData, error, isLoading } = useUserData();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState<string | null>(null);
   const [status, setStatus] = useState<string | null>(null);
@@ -60,8 +60,8 @@ export const FormUpdate = () => {
   };
 
   useEffect(() => {
-    if (!isLoading && userData) {
-      const user: User = userData.user;
+    if (user) {
+      // const user: User = userData.user;
       setFormData({
         email: user.email,
         first_name: user.first_name,
@@ -74,19 +74,7 @@ export const FormUpdate = () => {
         description: user.description,
       });
     }
-  }, [isLoading, userData]);
-
-  if (isLoading) {
-    return (
-      <div className="p-4 w-full flex justify-center items-center">
-        <Spinner className="w-10 h-10" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return <div className="text-black">Error: {error.message}</div>;
-  }
+  }, [user]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;

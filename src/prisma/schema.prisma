@@ -119,7 +119,7 @@ model InstanceConfiguration {
 
 model Plans {
   id String @id @default(cuid())
-  name String  @default("Standard")
+  name String  @default("Free plan")
   monthlyPrice Float @default(0.00)
   dailyExecutionLimit Float @default(3600.00)
   monthlyExecutionLimit Float @default(108000.00)
@@ -131,4 +131,6 @@ model Plans {
   stripSubscriptionId String? @unique @map(name: "stripe_subscription_id")
   stripePriceId String? @map(name: "stripe_price_id")
   stripeCurrentPeriodEnd DateTime? @map("stripe_current_period_end")
+  maxRooms Float @default(1)
+  hasIntegration Boolean @default(false)
 }

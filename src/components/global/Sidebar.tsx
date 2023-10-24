@@ -19,6 +19,8 @@ import { MdKeyboardArrowDown } from "react-icons/md";
 import { FaTools } from "react-icons/fa";
 import { FiLogOut } from "react-icons/fi";
 import { signOut } from "next-auth/react";
+import Cookies from "js-cookie";
+
 const customTheme: CustomFlowbiteTheme["sidebar"] = {
   root: {
     inner:
@@ -26,11 +28,13 @@ const customTheme: CustomFlowbiteTheme["sidebar"] = {
   },
 };
 
-export default function ContentSeparator() {
+export default function ContentSeparator({ user }) {
   const activePath = usePathname();
   const [botDropdownOpen, setBotDropdownOpen] = useState(
     activePath.startsWith("/dashboard/bot")
   );
+
+
 
   const toggleBotDropdown = () => {
     setBotDropdownOpen(!botDropdownOpen);
@@ -38,6 +42,7 @@ export default function ContentSeparator() {
 
   const handleLogout = () => {
     signOut();
+    Cookies.remove("rico_c_tk");
   };
 
   return (
@@ -170,7 +175,7 @@ export default function ContentSeparator() {
           </Sidebar.ItemGroup>
           <Sidebar.ItemGroup className="mt-auto">
             <Sidebar.Item href="https://ricosaas.eu/" icon={HiChartPie}>
-              <p>Upgrade to Pro</p>
+              <p>{user?.isPro ? "Manage your plan" : "Upgrade"}</p>
             </Sidebar.Item>
             <Sidebar.Item href="#" icon={HiViewBoards}>
               <p>Documentation</p>

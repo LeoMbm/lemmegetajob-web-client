@@ -5,7 +5,7 @@ import { prisma } from "@/lib/db";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { getStoredToken, storeToken } from "@/lib/cookie";
+import { getStoredToken, removeToken, storeToken } from "@/lib/cookie";
 
 export const authOptions = {
   adapter: PrismaAdapter(prisma),
@@ -61,16 +61,24 @@ export const authOptions = {
         if (storedToken) {
           session.backendToken = storedToken;
         } else {
-          const expiresIn = 1800;
+          const expiresIn = 3600;
           session.backendToken = jwt.sign(
             { sub: session.token.sub, email: session.token.email },
-            process.env.NEXTAUTH_SECRET,
+            process.env.NEXTAUTH_SECRET as string,
             { expiresIn: expiresIn }
           );
           storeToken(session.backendToken, expiresIn);
         }
       }
       return session;
+    },
+    async jwt({ token }) {
+      return token;
+    },
+    async signOut({ session, token }) {
+      if (session || token) {
+        removeToken();
+      }
     },
   },
 };

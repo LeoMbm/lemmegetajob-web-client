@@ -18,6 +18,7 @@ import { useEffect, useRef, useState } from "react";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { FaTools } from "react-icons/fa";
 import { signOut } from "next-auth/react";
+import Cookies from "js-cookie";
 
 const customTheme: CustomFlowbiteTheme["sidebar"] = {
   root: {
@@ -30,8 +31,10 @@ const customTheme: CustomFlowbiteTheme["sidebar"] = {
 
 export default function SidebarMobile({
   isSidebarOpen,
+  isPro,
 }: {
   isSidebarOpen: boolean;
+  isPro: boolean;
 }) {
   const activePath = usePathname();
   const [botDropdownOpen, setBotDropdownOpen] = useState(false);
@@ -48,6 +51,7 @@ export default function SidebarMobile({
 
   const handleLogout = () => {
     signOut();
+    Cookies.remove("rico_c_tk");
   };
 
   const sidebarRef = useRef<HTMLDivElement | null>(null);
@@ -184,7 +188,7 @@ export default function SidebarMobile({
           </Sidebar.ItemGroup>
           <Sidebar.ItemGroup className="mt-auto">
             <Sidebar.Item href="#" icon={HiChartPie}>
-              <p>Upgrade to Pro</p>
+              <p>{isPro ? "Manage your plan" : "Upgrade"}</p>
             </Sidebar.Item>
             <Sidebar.Item href="#" icon={HiViewBoards}>
               <p>Documentation</p>

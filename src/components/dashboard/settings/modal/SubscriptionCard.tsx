@@ -12,6 +12,12 @@ import {
   Button,
   Text,
   Input,
+  VStack,
+  HStack,
+  Heading,
+  Box,
+  Icon,
+  SimpleGrid
 } from "@chakra-ui/react";
 import {
   List,
@@ -29,7 +35,15 @@ import {
 import { MdCheckCircle } from "react-icons/md";
 import ToastMessage from "@/components/global/alert/Toast";
 import { useSession } from "next-auth/react";
-export const DeleteRoom = ({ overlay, isOpen, onClose, room, roomData }) => {
+import { FiCheck } from "react-icons/fi";
+import { SectionTitle } from "@/components/section/section-title";
+
+
+export const SubscriptionCard = ({
+  overlay,
+  isOpen,
+  onClose
+}) => {
   const [onDelete, setOnDelete] = useState(false);
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState("");
@@ -84,57 +98,11 @@ export const DeleteRoom = ({ overlay, isOpen, onClose, room, roomData }) => {
       >
         {overlay}
         <ModalContent>
-          {onDelete ? (
-            <>
-              <ModalHeader>
-                Are you sure you want to delete this room?
-              </ModalHeader>
-              <ModalCloseButton />
-              <ModalBody>
-                <Text>
-                  Please note that once deleted, you won't be able to create a
-                  new room for the next 24 hours.
-                </Text>
-                <FormControl className="mt-2">
-                  <FormLabel>Type: "DELETE/{room.name}"to confirm</FormLabel>
-                  <Input
-                    type="text"
-                    variant="flushed"
-                    className="rounded-lg"
-                    color="black"
-                    onChange={(e) => setNameConfirmation(e.target.value)}
-                  />
-                  <FormHelperText>Be sure before do that.</FormHelperText>
-                </FormControl>
-              </ModalBody>
-              <ModalFooter>
-                <Button isLoading={loading} onClick={handleDelete}>
-                  Delete
-                </Button>
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    onClose();
-                    setOnDelete(false);
-                  }}
-                >
-                  Close
-                </Button>
-              </ModalFooter>
-            </>
-          ) : (
             <>
               <ModalHeader>{room.name}</ModalHeader>
               <ModalCloseButton />
               <ModalBody>
-                <List spacing={3}>
-                  {Object.keys(room).map((key, value) => (
-                    <ListItem key={key}>
-                      <ListIcon as={MdCheckCircle} color="green.500" />
-                      {key}: {room[key]}
-                    </ListItem>
-                  ))}
-                </List>
+             
               </ModalBody>
               <ModalFooter>
                 <Button onClick={() => setOnDelete(true)}>Delete Room</Button>
@@ -150,7 +118,6 @@ export const DeleteRoom = ({ overlay, isOpen, onClose, room, roomData }) => {
                 </Button>
               </ModalFooter>
             </>
-          )}
           {status === "error" && (
             <ToastMessage
               message={message}
@@ -166,3 +133,6 @@ export const DeleteRoom = ({ overlay, isOpen, onClose, room, roomData }) => {
     </>
   );
 };
+
+
+
