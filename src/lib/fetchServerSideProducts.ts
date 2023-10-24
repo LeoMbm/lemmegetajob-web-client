@@ -2,10 +2,8 @@
 
 import { cookies } from "next/headers";
 import { NextResponse } from "next/server";
+import { checkEnvironmentUrl } from "./utils";
 
-const checkEnvironmentUrl = () => {
-  return process.env.NODE_ENV === "production" ? "" : "http://localhost:3000";
-};
 
 export const fetchServerSideProducts = async () => {
   try {

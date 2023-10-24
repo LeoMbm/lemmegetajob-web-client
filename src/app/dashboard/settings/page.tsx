@@ -3,6 +3,8 @@ import { IntegrationSettings } from "@/components/dashboard/settings/Integration
 import PremiumSettings from "@/components/dashboard/settings/PremiumSettings";
 import { RoomSettings } from "@/components/dashboard/settings/RoomSettings";
 import { BillingSettings } from "@/components/dashboard/settings/billing/BillingSettings";
+import appConfig from "@/data/config";
+import { fetchConfig } from "@/lib/fetchConfig";
 import { fetchServerSideProducts } from "@/lib/fetchServerSideProducts";
 import { fetchServerSideUser } from "@/lib/fetchServerSideUser";
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
@@ -10,7 +12,7 @@ import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
 export default async function Page() {
   const user = await fetchServerSideUser();
   // const products = await fetchServerSideProducts();
-  // console.log("[SERVER SIDE PRODUCTS]", products);
+    // console.log("[SERVER SIDE PRODUCTS]", products);
   return (
     <div className="h-full bg-gray-100 p-4">
       <div className="w-full">
@@ -38,7 +40,7 @@ export default async function Page() {
               <BillingSettings user={user} />
             </TabPanel>
             <TabPanel>
-              <RoomSettings />
+              <RoomSettings user={user} />
             </TabPanel>
             <TabPanel>
               <IntegrationSettings />

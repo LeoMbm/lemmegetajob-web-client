@@ -39,32 +39,13 @@ export async function POST(req: Request, res: Response) {
         },
         config
       );
-
       if (response.status === 200) {
-        const rooms = await prisma.rooms.findFirst({
-          where: {
-            user: {
-              id: user.id,
-            },
-          },
-        });
-        if (!rooms) {
-          console.log("No rooms found");
-          // await prisma.rooms.create({
-          //   data: {
-
-          //     user: {
-          //       connect: {
-          //         id: user.id
-          //       }
-          //     }
-          //   }})
-        }
-
+        console.log('[RESPONSE]', response.status);
         return new Response(JSON.stringify(response.data), {
           status: 200,
         });
-      } else {
+      } 
+      else {
         return new Response(JSON.stringify(response.data), {
           status: response.status,
         });

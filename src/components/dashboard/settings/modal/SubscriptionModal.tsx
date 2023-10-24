@@ -26,6 +26,7 @@ import ToastMessage from "@/components/global/alert/Toast";
 import { useSession } from "next-auth/react";
 import { FiCheck } from "react-icons/fi";
 import { Product } from "@/types/products";
+import Cookies from "js-cookie";
 export const SubscriptionModal = ({ overlay, isOpen, onClose }) => {
   const [onDelete, setOnDelete] = useState(false);
   const [message, setMessage] = useState("");
@@ -33,8 +34,7 @@ export const SubscriptionModal = ({ overlay, isOpen, onClose }) => {
   const [loading, setLoading] = useState(true);
 
   const [nameConfirmation, setNameConfirmation] = useState("");
-  const session = useSession();
-  const authToken = session.data?.backendToken;
+  const authToken = Cookies.get("rico_c_tk");
   const [data, setData] = useState<Product[]>([]);
 
   const fetchProduct = async () => {
@@ -118,6 +118,7 @@ export const Pricing = ({ children, plans }: { plans: Product[] }) => {
       setBLoading(false);
     }
   };
+
   return (
     <Box zIndex="2" pos="relative">
       <SimpleGrid columns={[1, null, 3]} spacing={2}>

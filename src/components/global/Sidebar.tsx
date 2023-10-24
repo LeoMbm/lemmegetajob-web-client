@@ -20,6 +20,7 @@ import { FaTools } from "react-icons/fa";
 import { FiLogOut } from "react-icons/fi";
 import { signOut } from "next-auth/react";
 import Cookies from "js-cookie";
+import { Button } from "@chakra-ui/react";
 
 const customTheme: CustomFlowbiteTheme["sidebar"] = {
   root: {
@@ -33,8 +34,8 @@ export default function ContentSeparator({ user }) {
   const [botDropdownOpen, setBotDropdownOpen] = useState(
     activePath.startsWith("/dashboard/bot")
   );
-
-
+  const [bloading, setBLoading] = useState(false);
+  const [billingUrl, setBillingUrl] = useState("");
 
   const toggleBotDropdown = () => {
     setBotDropdownOpen(!botDropdownOpen);
@@ -44,6 +45,25 @@ export default function ContentSeparator({ user }) {
     signOut();
     Cookies.remove("rico_c_tk");
   };
+
+  useEffect(() => {
+    const handleBillingPortal = async () => {
+      setBLoading(true);
+      const response = await fetch("/api/portal", {
+        method: "GET",
+      });
+      if (response.status === 200) {
+        const json = await response.json();
+        setBillingUrl(json.url);
+
+        setBLoading(false);
+      } else {
+        setBLoading(false);
+      }
+    };
+
+    handleBillingPortal();
+  }, []);
 
   return (
     <div className="mobile:hidden h-full">
@@ -67,6 +87,7 @@ export default function ContentSeparator({ user }) {
               active={activePath === "/dashboard/bot"}
               onClick={toggleBotDropdown}
               className="cursor-pointer"
+              href={null}
             >
               <div className="flex items-center justify-between">
                 <p className="mr-2">Bot</p>
@@ -174,14 +195,23 @@ export default function ContentSeparator({ user }) {
             </li>
           </Sidebar.ItemGroup>
           <Sidebar.ItemGroup className="mt-auto">
-            <Sidebar.Item href="https://ricosaas.eu/" icon={HiChartPie}>
+            <Sidebar.Item
+              icon={HiChartPie}
+              href={user?.isPro ? billingUrl : "#"}
+            >
               <p>{user?.isPro ? "Manage your plan" : "Upgrade"}</p>
             </Sidebar.Item>
-            <Sidebar.Item href="#" icon={HiViewBoards}>
+            <Sidebar.Item
+              href="https://ricodocs-58lic.notaku.site/"
+              icon={HiViewBoards}
+            >
               <p>Documentation</p>
             </Sidebar.Item>
-            <Sidebar.Item href="#" icon={HiViewBoards}>
-              <p>Help</p>
+            <Sidebar.Item
+              href="https://rico-2gfp4.desk.notaku.site/"
+              icon={HiViewBoards}
+            >
+              <p>Help Center</p>
             </Sidebar.Item>
           </Sidebar.ItemGroup>
         </Sidebar.Items>

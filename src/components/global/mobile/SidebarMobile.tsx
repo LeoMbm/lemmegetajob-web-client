@@ -32,12 +32,16 @@ const customTheme: CustomFlowbiteTheme["sidebar"] = {
 export default function SidebarMobile({
   isSidebarOpen,
   isPro,
+  user,
 }: {
   isSidebarOpen: boolean;
   isPro: boolean;
+  user: User;
 }) {
   const activePath = usePathname();
   const [botDropdownOpen, setBotDropdownOpen] = useState(false);
+  const [billingUrl, setBillingUrl] = useState("");
+  const [bloading, setBLoading] = useState(false);
 
   const toggleBotDropdown = () => {
     setBotDropdownOpen(!botDropdownOpen);
@@ -53,6 +57,25 @@ export default function SidebarMobile({
     signOut();
     Cookies.remove("rico_c_tk");
   };
+
+  useEffect(() => {
+    const handleBillingPortal = async () => {
+      setBLoading(true);
+      const response = await fetch("/api/portal", {
+        method: "GET",
+      });
+      if (response.status === 200) {
+        const json = await response.json();
+        setBillingUrl(json.url);
+
+        setBLoading(false);
+      } else {
+        setBLoading(false);
+      }
+    };
+
+    handleBillingPortal();
+  }, []);
 
   const sidebarRef = useRef<HTMLDivElement | null>(null);
   const toggleButtonRef = useRef<HTMLButtonElement | null>(null);
@@ -187,14 +210,23 @@ export default function SidebarMobile({
             </li>
           </Sidebar.ItemGroup>
           <Sidebar.ItemGroup className="mt-auto">
-            <Sidebar.Item href="#" icon={HiChartPie}>
+            <Sidebar.Item
+              href={user?.isPro ? billingUrl : "#"}
+              icon={HiChartPie}
+            >
               <p>{isPro ? "Manage your plan" : "Upgrade"}</p>
             </Sidebar.Item>
-            <Sidebar.Item href="#" icon={HiViewBoards}>
+            <Sidebar.Item
+              href="https://ricodocs-58lic.notaku.site/"
+              icon={HiViewBoards}
+            >
               <p>Documentation</p>
             </Sidebar.Item>
-            <Sidebar.Item href="#" icon={HiViewBoards}>
-              <p>Help</p>
+            <Sidebar.Item
+              href="https://rico-2gfp4.desk.notaku.site/"
+              icon={HiViewBoards}
+            >
+              <p>Help Center</p>
             </Sidebar.Item>
           </Sidebar.ItemGroup>
         </Sidebar.Items>

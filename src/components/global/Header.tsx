@@ -15,22 +15,40 @@ import {
   Button,
   Switch,
   useColorMode,
+  Tag,
+  TagLabel,
+  TagLeftIcon,
+  TagRightIcon,
+  TagCloseButton,
 } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
-import { useUserData } from "@/lib/useUserData";
 import { User } from "@/types/user";
-import { CloseIcon, HamburgerIcon } from "@chakra-ui/icons";
-import { Spinner } from "@chakra-ui/react";
+import { CloseIcon, HamburgerIcon, TimeIcon } from "@chakra-ui/icons";
 import SidebarMobile from "./mobile/SidebarMobile";
 import { useRouter } from "next/navigation";
-export default function Header({ user }) {
+
+function formatSecondToHours(seconds) {
+  let hours = seconds / 3600;
+  let minutes = (seconds - hours * 3600) / 60;
+  let secondsLeft = seconds - hours * 3600 - minutes * 60;
+  return {
+    hours: hours.toFixed(0),
+    minutes: minutes.toFixed(0),
+    seconds: secondsLeft.toFixed(0),
+  };
+}
+
+export default function Header({ user }: { user: User }) {
   const [prevScrollPos, setPrevScrollPos] = useState(0);
   const [hiddenHeader, setHiddenHeader] = useState(false);
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   // const { userData, error, isLoading } = useUserData();
   const router = useRouter();
   const { colorMode, toggleColorMode } = useColorMode();
+
+  const executionTime = formatSecondToHours(
+    user.rooms[0].monthlyExecutionLimit
+  );
 
   const toggleSidebar = () => {
     setSidebarOpen(!isSidebarOpen);
@@ -86,7 +104,31 @@ export default function Header({ user }) {
             </Text>
           </Box>
         </Link>
-        <Box display="flex" alignItems="center" className="mobile:hidden">
+        <Box display={{ base: "none", lg: "flex" }} alignItems="center">
+          <Button
+            leftIcon={<TimeIcon />}
+            colorScheme="linkedin"
+            size="md"
+            color="black"
+            _hover={{
+              backgroundColor: "blue.400",
+              color: "white",
+            }}
+            borderRadius="full"
+            mr={6}
+            variant={"solid"}
+          >
+            <p>
+              {user?.rooms.length > 0
+                ? executionTime.hours +
+                  "h " +
+                  executionTime.minutes +
+                  "m " +
+                  executionTime.seconds +
+                  "s"
+                : "5h"}
+            </p>
+          </Button>
           <Menu>
             <Tooltip
               label={
@@ -164,7 +206,11 @@ export default function Header({ user }) {
         }`}
       >
         {/* Le contenu de votre SidebarMobile */}
-        <SidebarMobile isPro={user?.isPro} isSidebarOpen={isSidebarOpen} />
+        <SidebarMobile
+          user={user}
+          isPro={user?.isPro}
+          isSidebarOpen={isSidebarOpen}
+        />
       </Box>
     </>
   );

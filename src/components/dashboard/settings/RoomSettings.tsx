@@ -31,17 +31,18 @@ import { DeleteRoom } from "./modal/DeleteRoom";
 import { Room } from "@/types/room";
 import { MdCheckCircle } from "react-icons/md";
 import { DeleteIcon, EmailIcon } from "@chakra-ui/icons";
-export const RoomSettings = () => {
-  const { userData, error, isLoading } = useUserData();
+import Cookies from "js-cookie";
+export const RoomSettings = ({ user }) => {
+  // const { userData, error, isLoading } = useUserData();
   const [creating, setCreating] = useState(false);
   const [rooms, setRooms] = useState<Room[]>([]);
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState("");
-  const user = userData?.user;
+  // const user = userData?.user;
   const dt = new Date();
   const [date, setDate] = useState(dt.toLocaleDateString());
-  const session = useSession();
-  const authToken = session.data?.backendToken;
+  // const session = useSession();
+  const authToken = Cookies.get("rico_c_tk");
   const OverlayOne = () => (
     <ModalOverlay
       bg="blackAlpha.300"
@@ -50,7 +51,11 @@ export const RoomSettings = () => {
   );
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [overlay, setOverlay] = React.useState(<OverlayOne />);
-  const [roomData, setRoomData] = useState<{}>({});
+  const [roomData, setRoomData] = useState<{}>({
+    Bot: {},
+    Services: {},
+    Metadata: {},
+  });
 
   const handleCreate = async () => {
     setCreating(true);
@@ -84,8 +89,11 @@ export const RoomSettings = () => {
     });
     const data = await res.json();
     if (res.status === 200) {
-      console.log(data);
-      setRoomData(data.details);
+      setRoomData({
+        Bot: data.details.deployments,
+        Services: data.details.services,
+        Metadata: data.details.details,
+      });
     }
   };
 
@@ -96,7 +104,8 @@ export const RoomSettings = () => {
         getRoomsData(user.rooms[0].id);
       }
     }
-  }, [user]);
+  }, []);
+
 
   return (
     <>
@@ -106,86 +115,107 @@ export const RoomSettings = () => {
         </div>
       )}
       <Stack spacing="4" width="90%" margin="auto">
-        {isLoading && <Text>Loading...</Text>}
-        <Accordion allowToggle>
-          {user && rooms.length > 0 ? (
-            rooms.map((room) => (
-              <>
-                <AccordionItem>
-                  <h2>
-                    <AccordionButton>
-                      <Box as="span" flex="1" textAlign="left">
-                        {room.name}
-                      </Box>
-                      <AccordionIcon />
-                    </AccordionButton>
-                  </h2>
-                  <AccordionPanel pb={4}>
-                    <List spacing={3}>
-                      {Object.keys(room).map((key, value) => (
-                        <ListItem key={key}>
-                          <ListIcon as={MdCheckCircle} color="green.500" />
-                          {key}: {room[key]}
-                        </ListItem>
-                      ))}
-                      <Box>
-                        <IconButton
-                          variant="outline"
-                          colorScheme="red"
-                          aria-label="Delete Room"
-                          icon={<DeleteIcon />}
-                          onClick={() => {
-                            setOverlay(<OverlayOne />);
-                            onOpen();
-                          }}
-                        />
-                      </Box>
-                    </List>
-                  </AccordionPanel>
-                </AccordionItem>
-                <DeleteRoom
-                  overlay={overlay}
-                  isOpen={isOpen}
-                  onClose={onClose}
-                  room={room}
-                  roomData={roomData}
-                />
-              </>
-              // <Card
-              //   key={room?.id}
-              //   size="sm"
-              //   backgroundColor="gray.100"
-              //   textColor="black"
-              //   className="cursor-pointer"
-              //   _hover={{
-              //     backgroundColor: "gray.300",
-              //   }}
-              //   onClick={() => {
-              //     setOverlay(<OverlayOne />);
-              //     onOpen();
-              //   }}
-              // >
-              //   <CardHeader>
-              //     <Heading size="md">Room: {room?.name}</Heading>
-              //   </CardHeader>
-              //   <CardBody>
-              //     <Text>Status: Active</Text>
-              //     <Text>Created At: {date}</Text>
-              //   </CardBody>
-              // </Card>
-            ))
-          ) : (
-            <Button
-              onClick={handleCreate}
-              size="md"
-              colorScheme="blue"
-              color="blue.500"
-              isLoading={creating}
-            >
-              Create you first room
-            </Button>
-          )}
-        </Accordion>
+        {user && rooms.length > 0 ? (
+          rooms.map((room) => (
+            <Accordion key={room.id} allowMultiple>
+              <AccordionItem>
+                <h2>
+                  <AccordionButton>
+                    <Box as="span" flex="1" textAlign="left">
+                      {room.name}
+                    </Box>
+                    <AccordionIcon />
+                  </AccordionButton>
+                </h2>
+                <AccordionPanel pb={4}>
+                  <List spacing={3}>
+                    <AccordionItem>
+                      <h2>
+                        <AccordionButton>
+                          <Box as="span" flex="1" textAlign="left">
+                            Bot
+                          </Box>
+                          <AccordionIcon />
+                        </AccordionButton>
+                      </h2>
+                      <AccordionPanel pb={4}>
+                        <List spacing={3}>
+                          {roomData?.Bot &&
+                            Array.isArray(roomData.Bot) &&
+                            roomData.Bot.map((item) => (
+                              <ListItem key={item.metadata.uid}>
+                                <ListIcon
+                                  as={MdCheckCircle}
+                                  color="green.500"
+                                />
+                                {item.metadata.name}
+                              </ListItem>
+                            ))}
+                        </List>
+                      </AccordionPanel>
+                    </AccordionItem>
+
+                    <AccordionItem>
+                      <h2>
+                        <AccordionButton>
+                          <Box as="span" flex="1" textAlign="left">
+                            Services
+                          </Box>
+                          <AccordionIcon />
+                        </AccordionButton>
+                      </h2>
+                      <AccordionPanel pb={4}>
+                        <List spacing={3}>
+                          {" "}
+                          {roomData?.Services &&
+                            Array.isArray(roomData.Services) &&
+                            roomData.Services.map((item) => (
+                              <ListItem key={item.metadata.uid}>
+                                <ListIcon
+                                  as={MdCheckCircle}
+                                  color="green.500"
+                                />
+                                {item.metadata.name}
+                              </ListItem>
+                            ))}
+                        </List>
+                      </AccordionPanel>
+                    </AccordionItem>
+                    <Box>
+                      <IconButton
+                        variant="outline"
+                        colorScheme="red"
+                        aria-label="Delete Room"
+                        icon={<DeleteIcon />}
+                        onClick={() => {
+                          setOverlay(<OverlayOne />);
+                          onOpen();
+                        }}
+                      />
+                    </Box>
+                  </List>
+                </AccordionPanel>
+              </AccordionItem>
+              <DeleteRoom
+                overlay={overlay}
+                isOpen={isOpen}
+                onClose={onClose}
+                room={room}
+                roomData={roomData}
+              />
+            </Accordion>
+          ))
+        ) : (
+          <Button
+            onClick={handleCreate}
+            size="md"
+            colorScheme="blue"
+            color="blue.500"
+            isLoading={creating}
+          >
+            Create your first room
+          </Button>
+        )}
       </Stack>
     </>
   );

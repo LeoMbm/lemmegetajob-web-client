@@ -103,3 +103,8 @@ export const parseProducts = async (products: any) => {
 
   return sortedResponse;
 };
+
+export const checkEnvironmentUrl = () => {
+  return process.env.NODE_ENV === "production" ? "" : "http://localhost:3000";
+};
+

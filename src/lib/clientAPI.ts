@@ -1,17 +1,14 @@
-import { authOptions } from '@/app/api/auth/[...nextauth]/options';
-import axios from 'axios';
-import { getServerSession } from 'next-auth';
+import axios from "axios";
+import Cookies from "js-cookie";
 
-const session = async () => await getServerSession({...authOptions});
-const authToken = session?.backendToken;
-
+const authToken = Cookies.get("rico_c_tk");
 
 const clientAPI = axios.create({
-    baseURL: process.env.BASE_API_URL,
-    headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${authToken}`,
-    },
+  baseURL: process.env.BASE_API_URL,
+  headers: {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${authToken}`,
+  },
 });
 
 export default clientAPI;

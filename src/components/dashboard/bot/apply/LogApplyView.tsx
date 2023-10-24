@@ -11,11 +11,12 @@ import { LogApplyItem } from "./LogApplyItem";
 import { useUserData } from "@/lib/useUserData";
 import { User } from "@/types/user";
 import { Spinner } from "flowbite-react";
+import Cookies from "js-cookie";
 
-const LOG_URL = process.env.NEXT_PUBLIC_LOG_APPLY_REALTIME_URL;
+const LOG_URL = process.env.NEXT_PUBLIC_LOG_REALTIME_URL;
 
-export const LogApplyView = () => {
-  const { userData, error, isLoading } = useUserData();
+export const LogApplyView = ({ user }) => {
+  // const { userData, error, isLoading } = useUserData();
   const router = useRouter();
   const [logs, setLogs] = useState<string[]>([]);
   const scrollableContainerRef = useRef<HTMLDivElement>(null);
@@ -25,11 +26,8 @@ export const LogApplyView = () => {
   const [deployementName, setDeployementName] = useState<string | null>(null);
   const [diodeStatus, setDiodeStatus] = useState("");
   const [message, setMessage] = useState<string | null>("");
-  const session = useSession();
-  const authToken = session.data?.backendToken;
-  if (isLoading) {
-    console.log("Loading logs...");
-  }
+  const authToken = Cookies.get("rico_c_tk");
+  const socket_email = user.email.replace(/[^a-zA-Z0-9]/g, "");
 
   const launchInstance = async () => {
     const headers = {
@@ -44,16 +42,16 @@ export const LogApplyView = () => {
     });
     const data = await res.json();
 
-    if (res.status === 401) {
-      console.log("Redirect to sign in page");
-    }
-    if (res.status === 500) {
-      console.log("Error launching bot");
-    }
-    if (res.status === 200) {
+    if (data.status === 200) {
       console.log("Bot launched successfully");
       setNamespaces(data.namespace);
       setDeployementName(data.deployment_name);
+    }
+    if (data.status === 401) {
+      console.log("Redirect to sign in page");
+    }
+    if (data.status === 500) {
+      console.log("Error launching bot");
     }
     return data;
   };
@@ -174,8 +172,6 @@ export const LogApplyView = () => {
 
   useEffect(() => {
     if (botApplyLaunch) {
-      const user: User = userData?.user;
-      const socket_email = user?.email.replace(/[^a-zA-Z0-9]/g, "");
       const socket = new WebSocket(`${LOG_URL}/${socket_email}/apply`);
 
       setSocket(socket);
@@ -207,7 +203,7 @@ export const LogApplyView = () => {
         socket.close();
       };
     }
-  }, [botApplyLaunch, userData]);
+  }, [botApplyLaunch]);
 
   // FAKE PART
   const fakeLaunch = async () => {
@@ -282,26 +278,20 @@ export const LogApplyView = () => {
         />
       </div>
       <div className="w-full h-full border rounded-lg overflow-hidden shadow-md mt-4">
-        {isLoading ? (
-          <div className="flex items-center justify-center py-3 bg-gray-200 text-gray-600">
-            <Spinner size="md" />
-          </div>
-        ) : (
-          <div
-            className="flex flex-col-reverse h-96 overflow-y-auto"
-            ref={scrollableContainerRef}
-          >
-            <ScrollableFeed forceScroll={true}>
-              {logs.length === 0 ? (
-                <div className="flex items-center justify-center py-3 bg-gray-200 text-gray-600">
-                  No logs
-                </div>
-              ) : (
-                logs.map((log, i) => <LogApplyItem log={log} index={i} />)
-              )}
-            </ScrollableFeed>
-          </div>
-        )}
+        <div
+          className="flex flex-col-reverse h-96 overflow-y-auto"
+          ref={scrollableContainerRef}
+        >
+          <ScrollableFeed forceScroll={true}>
+            {logs.length === 0 ? (
+              <div className="flex items-center justify-center py-3 bg-gray-200 text-gray-600">
+                No logs
+              </div>
+            ) : (
+              logs.map((log, i) => <LogApplyItem log={log} index={i} />)
+            )}
+          </ScrollableFeed>
+        </div>
       </div>
       <ToastFeedback message={message} status={diodeStatus} />
     </div>

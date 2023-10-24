@@ -11,11 +11,10 @@ import { LogItem } from "./LogItem";
 import { useUserData } from "@/lib/useUserData";
 import { User } from "@/types/user";
 import { Spinner } from "flowbite-react";
+import Cookies from "js-cookie";
+const LOG_URL = process.env.NEXT_PUBLIC_LOG_REALTIME_URL;
 
-const LOG_URL = process.env.NEXT_PUBLIC_LOG_SCRAP_REALTIME_URL;
-
-export const LogView = () => {
-  const { userData, error, isLoading } = useUserData();
+export const LogView = ({ user }) => {
   const router = useRouter();
   const [logs, setLogs] = useState<string[]>([]);
   const scrollableContainerRef = useRef<HTMLDivElement>(null);
@@ -25,12 +24,7 @@ export const LogView = () => {
   const [deployementName, setDeployementName] = useState<string | null>(null);
   const [diodeStatus, setDiodeStatus] = useState("");
   const [message, setMessage] = useState<string | null>("");
-  const session = useSession();
-  const authToken = session.data?.backendToken;
-  if (isLoading) {
-    console.log("Loading logs");
-  }
-  const user: User = userData?.user;
+  const authToken = Cookies.get("rico_c_tk");
   const socket_email = user?.email.replace(/[^a-zA-Z0-9]/g, "");
   console.log(socket_email);
 
@@ -278,26 +272,20 @@ export const LogView = () => {
         />
       </div>
       <div className="w-full h-full border rounded-lg overflow-hidden shadow-md mt-4">
-        {isLoading ? (
-          <div className="flex items-center justify-center py-3 bg-gray-200 text-gray-600">
-            <Spinner size="md" />
-          </div>
-        ) : (
-          <div
-            className="flex flex-col-reverse h-96 overflow-y-auto"
-            ref={scrollableContainerRef}
-          >
-            <ScrollableFeed forceScroll={true}>
-              {logs.length === 0 ? (
-                <div className="flex items-center justify-center py-3 bg-gray-200 text-gray-600">
-                  No logs
-                </div>
-              ) : (
-                logs.map((log, i) => <LogItem log={log} index={i} />)
-              )}
-            </ScrollableFeed>
-          </div>
-        )}
+        <div
+          className="flex flex-col-reverse h-96 overflow-y-auto"
+          ref={scrollableContainerRef}
+        >
+          <ScrollableFeed forceScroll={true}>
+            {logs.length === 0 ? (
+              <div className="flex items-center justify-center py-3 bg-gray-200 text-gray-600">
+                No logs
+              </div>
+            ) : (
+              logs.map((log, i) => <LogItem log={log} index={i} />)
+            )}
+          </ScrollableFeed>
+        </div>
       </div>
       <ToastFeedback message={message} status={diodeStatus} />
     </div>

@@ -26,22 +26,26 @@ export const PaymentInfoCard = ({ data }) => {
   const [user, setUser] = useState(data);
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(false);
-  const purchaseNow = async () => {
-    try {
-      const response = await fetch("/api/create-payment", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+  const [billingUrl, setBillingUrl] = useState("");
+  const handleBillingPortal = async () => {
+    setLoading(true);
+    setDisabled(true);
+    const response = await fetch("/api/portal", {
+      method: "GET",
+    });
+    if (response.status === 200) {
       const json = await response.json();
-      console.log(json);
-
+      setBillingUrl(json.url);
       window.location.href = json.url;
-    } catch (error) {
-      console.log(error);
+      setLoading(false);
+      setDisabled(false);
+    } else {
+      setLoading(false);
+      setDisabled(false);
     }
   };
+
+  handleBillingPortal();
 
   return (
     <>
@@ -64,10 +68,12 @@ export const PaymentInfoCard = ({ data }) => {
                 textDecoration: "underline",
                 color: "blue.500",
               }}
-              onClick={purchaseNow}
+              onClick={handleBillingPortal}
+              isLoading={loading}
+              isDisabled={disabled}
             >
               <Icon as={AddIcon} className="w-4 h-4 mr-2 flex-shrink-0" />
-              {user.isPro ? "Update" : "Add"}
+              Update
             </Button>
           </Flex>
         </CardBody>

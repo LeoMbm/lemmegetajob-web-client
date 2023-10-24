@@ -61,6 +61,7 @@ export const authOptions = {
         if (storedToken) {
           session.backendToken = storedToken;
         } else {
+          console.log("[AUTH OPTIONS]", session);
           const expiresIn = 3600;
           session.backendToken = jwt.sign(
             { sub: session.token.sub, email: session.token.email },

@@ -29,14 +29,14 @@ import {
 import { MdCheckCircle } from "react-icons/md";
 import ToastMessage from "@/components/global/alert/Toast";
 import { useSession } from "next-auth/react";
+import Cookies from "js-cookie";
 export const DeleteRoom = ({ overlay, isOpen, onClose, room, roomData }) => {
   const [onDelete, setOnDelete] = useState(false);
   const [message, setMessage] = useState("");
   const [status, setStatus] = useState("");
   const [loading, setLoading] = useState(false);
   const [nameConfirmation, setNameConfirmation] = useState("");
-  const session = useSession();
-  const authToken = session.data?.backendToken;
+  const authToken = Cookies.get("rico_c_tk");
   const handleDelete = async () => {
     setLoading(true);
     const value = nameConfirmation;

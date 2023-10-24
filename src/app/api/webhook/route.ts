@@ -45,6 +45,8 @@ export async function POST(req: NextRequest, res: NextResponse) {
     let upgradable = true;
     let maxRooms = 1;
     let hasIntegrations = false;
+    console.log(subscription.items.data[0]);
+
     switch (product_name) {
       case "Seeker Plan":
         monthlyExecutionLimit = 216000;
@@ -63,18 +65,28 @@ export async function POST(req: NextRequest, res: NextResponse) {
       default:
         break;
     }
+    await prisma.rooms.update({
+      where: {
+        userId: session.metadata.userId,
+      },
+      data: {
+        monthlyExecutionLimit,
+        dailyExecutionLimit,
+      },
+    });
     await prisma.plans.update({
       where: {
         stripeCustomerId: subscription.customer as string,
       },
       data: {
         userId: session.metadata.userId,
-        stripSubscriptionId: subscription.id as string,
+        stripSubscriptionId: subscription.items.data[0].subscription,
         stripeCustomerId: subscription.customer as string,
         stripePriceId: subscription.items.data[0].price.id,
         stripeCurrentPeriodEnd: new Date(
           subscription.current_period_end * 1000
         ),
+        started_at: new Date(subscription.current_period_start * 1000),
         name: session.metadata.product_name,
         isUpgradable: upgradable,
         monthlyPrice,
