@@ -16,14 +16,14 @@ export const ConfirmEmail = () => {
   const [message, setMessage] = useState(null);
   const [loading, setLoading] = useState(true);
   const [status, setStatus] = useState();
-  console.log(token);
+
 
   const verifyEmail = async () => {
     const response = await fetch(`api/auth/confirm?token=${token}`, {
       method: "GET",
     });
     const data = await response.json();
-    console.log(data.message);
+
     if (response.status == 200) {
       setVerified(true);
       setLoading(false);
@@ -39,7 +39,6 @@ export const ConfirmEmail = () => {
 
   useEffect(() => {
     if (token?.length > 0) verifyEmail();
-    console.log("Change");
   }, [token]);
 
   return (

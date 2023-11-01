@@ -53,7 +53,6 @@ export const authOptions = {
     signIn: "/signin",
     signOut: "/signout",
   },
-  
   callbacks: {
     async session(session) {
       // Find a way to save the token for avoid regenerate it every time
@@ -62,7 +61,7 @@ export const authOptions = {
         if (storedToken) {
           session.backendToken = storedToken;
         } else {
-          console.log("[AUTH OPTIONS]", session);
+          // console.log("[AUTH OPTIONS]", session);
           const expiresIn = 3600;
           session.backendToken = jwt.sign(
             { sub: session.token.sub, email: session.token.email },
@@ -76,7 +75,12 @@ export const authOptions = {
     },
     async jwt({ token }) {
       return token;
-    }
+    },
+    async signOut({ session, token }) {
+      if (session || token) {
+        removeToken();
+      }
+    },
   },
 };
 

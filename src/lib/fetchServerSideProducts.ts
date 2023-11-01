@@ -23,7 +23,6 @@ export const fetchServerSideProducts = async () => {
         },
       }
     );
-    console.log("[REQUEST]", response);
     if (!response.ok) {
       return null;
     }

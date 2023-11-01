@@ -35,7 +35,7 @@ export async function POST(req: Request, res: Response) {
         },
         config
       );
-      console.log(response);
+      // console.log(response);
       if (response.status === 200) {
         return new Response(JSON.stringify(response.data), {
           status: 200,

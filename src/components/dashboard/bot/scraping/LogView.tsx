@@ -26,7 +26,7 @@ export const LogView = ({ user }) => {
   const [message, setMessage] = useState<string | null>("");
   const authToken = Cookies.get("rico_c_tk");
   const socket_email = user?.email.replace(/[^a-zA-Z0-9]/g, "");
-  console.log(socket_email);
+  // console.log(socket_email);
 
   useEffect(() => {
     const savedLogs = localStorage.getItem("logs");
@@ -93,7 +93,6 @@ export const LogView = ({ user }) => {
     });
 
     const data = await res.json();
-    console.log(data);
     return data;
   };
 
@@ -102,7 +101,6 @@ export const LogView = ({ user }) => {
     try {
       const response = await stopInstance();
 
-      console.log(response);
       if (response.status === 200) {
         console.log("Bot stopped successfully.");
         setMessage("Bot stopped successfully.");
@@ -128,12 +126,12 @@ export const LogView = ({ user }) => {
   };
 
   const handleLaunch = async () => {
-    console.log("Launching bot...");
+    // console.log("Launching bot...");
     setDiodeStatus("waiting");
     try {
       const response = await launchInstance();
       if (response.status === 200) {
-        console.log("Bot launched successfully let's go !");
+        // console.log("Bot launched successfully let's go !");
         setDiodeStatus("success");
         setBotLaunched(true);
         localStorage.setItem("botLaunched", "true");
@@ -144,7 +142,6 @@ export const LogView = ({ user }) => {
         console.log("Redirect to sign in page");
         // router.push("/signin")
       } else {
-        console.log(response);
         setDiodeStatus("failure");
         setMessage("Error launching bot");
         setTimeout(() => {

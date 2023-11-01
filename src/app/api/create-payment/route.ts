@@ -39,8 +39,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
       },
     });
 
-    console.log("[BILLING]", line_items);
-    console.log("[PLANS]", plans);
     if (
       plans &&
       plans.stripeCustomerId &&

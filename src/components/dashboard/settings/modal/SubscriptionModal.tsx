@@ -46,7 +46,6 @@ export const SubscriptionModal = ({ overlay, isOpen, onClose }) => {
     });
     if (response.status === 200) {
       const data = await response.json();
-      console.log(data);
       setData(data);
       setLoading(false);
     } else {
@@ -111,7 +110,6 @@ export const Pricing = ({ children, plans }: { plans: Product[] }) => {
     });
     if (response.status === 200) {
       const json = await response.json();
-      console.log(json);
 
       setBLoading(false);
       window.location.href = json.url;

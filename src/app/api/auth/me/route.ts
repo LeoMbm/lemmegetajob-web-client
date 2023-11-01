@@ -7,15 +7,17 @@ import { checkPlans } from "@/lib/subscription";
 import { User } from "@/types/user";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
+import { getToken } from "next-auth/jwt";
 export async function GET(req: NextRequest) {
   // Get user
   const session = await getServerSession({ req, ...authOptions });
+  const secret = process.env.NEXTAUTH_SECRET as string;
   if (!session) {
     const headers = req.headers.get("Authorization");
-    const beareToken = headers?.split(" ")[1];
-    if (beareToken) {
+    const bearerToken = headers?.split(" ")[1];
+    if (bearerToken) {
       const token = jwt.verify(
-        beareToken,
+        bearerToken,
         process.env.NEXTAUTH_SECRET as string
       );
 

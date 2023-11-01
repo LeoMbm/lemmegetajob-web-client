@@ -46,17 +46,14 @@ export default function CredentialsForm() {
             email: email,
             password: password
         };
-        console.log(data);
         setIsLoading(true);
         signIn('credentials', { ...data, redirect: false, callbackUrl})
         .then((response) => {
           if (response?.error === null) {
-              console.log(response);
               setMessage("Login successful");
               setStatus('success');
             }
             else {
-                console.log(response);
                 setMessage(response.error);
                 setStatus('error');
             }

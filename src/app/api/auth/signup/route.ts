@@ -6,6 +6,7 @@ import {
   generateUniqueToken,
   sendEmail,
 } from "@/lib/utils";
+import { stripe } from "../../../../lib/stripe";
 
 export async function POST(req: NextRequest) {
   const { email, first_name, last_name, password, phone, position } =
@@ -53,6 +54,11 @@ export async function POST(req: NextRequest) {
       create_time: uniqueToken.createdAt,
     },
   });
+  // const fullName = `${first_name} ${last_name}`;
+  // await stripe.customers.create({
+  //   email: email,
+  //   name: fullName,
+  // });
   await prisma.plans.create({
     data: {
       user: {

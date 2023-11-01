@@ -41,7 +41,6 @@ export const DeleteRoom = ({ overlay, isOpen, onClose, room, roomData }) => {
     setLoading(true);
     const value = nameConfirmation;
     const to_confirm = "DELETE/" + room.name;
-    console.log(value);
     const headers = {
       Authorization: `Bearer ${authToken}`,
     };
@@ -52,14 +51,12 @@ export const DeleteRoom = ({ overlay, isOpen, onClose, room, roomData }) => {
       return;
     } else {
       const id = room.id;
-      console.log(id);
       const res = await fetch(`/api/rooms?roomId=${id}`, {
         method: "DELETE",
         headers,
       });
       if (res.status === 200) {
         const data = await res.json();
-        console.log(data);
         setMessage(data.message);
         setStatus("success");
         setLoading(false);

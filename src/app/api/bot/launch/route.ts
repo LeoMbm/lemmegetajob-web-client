@@ -31,7 +31,7 @@ export async function POST(req: Request, res: Response) {
       }
 
       const user = session.user;
-      console.log(user);
+      // console.log(user);
       const response = await axios.post(
         `${process.env.BASE_API_URL}/launch-bot`,
         {
@@ -40,7 +40,7 @@ export async function POST(req: Request, res: Response) {
         config
       );
       if (response.status === 200) {
-        console.log('[RESPONSE]', response.status);
+        // console.log('[RESPONSE]', response.status);
         return new Response(JSON.stringify(response.data), {
           status: 200,
         });

@@ -34,7 +34,6 @@ export const SubButton = ({ isPro = false }: SubButtonProps) => {
         },
       });
       const json = await response.json();
-      console.log(json);
 
       window.location.href = json.url;
       setLoading(false);

@@ -109,7 +109,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
     );
     // If user cancel but plan work until end period
     if (subscription.cancel_at_period_end) {
-      console.log("[CANCEL_SUB]", subscription.items);
+      // console.log("[CANCEL_SUB]", subscription.items);
       // TODO: ADD CANCELLATION
       await prisma.plans.update({
         where: {

@@ -43,15 +43,15 @@ export const LogApplyView = ({ user }) => {
     const data = await res.json();
 
     if (data.status === 200) {
-      console.log("Bot launched successfully");
+      // console.log("Bot launched successfully");
       setNamespaces(data.namespace);
       setDeployementName(data.deployment_name);
     }
     if (data.status === 401) {
-      console.log("Redirect to sign in page");
+      // console.log("Redirect to sign in page");
     }
     if (data.status === 500) {
-      console.log("Error launching bot");
+      console.error("Error launching bot");
     }
     return data;
   };
@@ -69,18 +69,17 @@ export const LogApplyView = ({ user }) => {
     });
 
     const data = await res.json();
-    console.log(data);
     return data;
   };
 
   const handleStop = async () => {
-    console.log("Stopping bot...");
+    // console.log("Stopping bot...");
     try {
       const response = await stopInstance();
 
       console.log(response);
       if (response.status === 200) {
-        console.log("Bot stopped successfully.");
+        // console.log("Bot stopped successfully.");
         setMessage("Bot stopped successfully.");
         setBotApplyLaunch(false);
         setDiodeStatus("");
@@ -91,12 +90,12 @@ export const LogApplyView = ({ user }) => {
       }
       if (response.message.status === 401) {
         setMessage("You are not authorized to perform this action.");
-        console.log("Redirect to sign in page");
+        // console.log("Redirect to sign in page");
         // router.push("/signin")
       }
       if (response.message.status === 404) {
         setMessage("Bot not found");
-        console.log("Bot not found");
+        // console.log("Bot not found");
       }
     } catch (error) {
       console.error("Error stopping bot:", error);
@@ -104,12 +103,12 @@ export const LogApplyView = ({ user }) => {
   };
 
   const handleLaunch = async () => {
-    console.log("Launching bot...");
+    // console.log("Launching bot...");
     setDiodeStatus("waiting");
     try {
       const response = await launchInstance();
       if (response.status === 200) {
-        console.log("Bot launched successfully let's go !");
+        // console.log("Bot launched successfully let's go !");
         setDiodeStatus("success");
         setBotApplyLaunch(true);
         localStorage.setItem("botApplyLaunch", "true");
@@ -117,10 +116,10 @@ export const LogApplyView = ({ user }) => {
       } else if (response.status === 401) {
         setDiodeStatus("failure");
         setMessage("You are not authorized to perform this action.");
-        console.log("Redirect to sign in page");
+        // console.log("Redirect to sign in page");
         // router.push("/signin")
       } else {
-        console.log(response);
+        // console.log(response);
         setDiodeStatus("failure");
         setMessage("Error launching bot");
         setTimeout(() => {
@@ -137,9 +136,9 @@ export const LogApplyView = ({ user }) => {
   };
 
   const handleClearLogs = () => {
-    console.log(logs);
+    // console.log(logs);
     setLogs([]);
-    console.log("Logs cleared.");
+    // console.log("Logs cleared.");
   };
 
   useEffect(() => {
@@ -182,7 +181,7 @@ export const LogApplyView = ({ user }) => {
 
       socket.onmessage = (event) => {
         const message = event.data;
-        console.log("Received message:", message);
+        // console.log("Received message:", message);
 
         if (message) {
           setLogs((prevLogs) => [...prevLogs, message]);

@@ -15,7 +15,7 @@ export default async function DashboardLayout({
   if (!user) {
     redirect("/signin");
   }
-  
+
   return (
     <div className="flex flex-col min-h-screen">
       <div className="w-full">
@@ -25,9 +25,7 @@ export default async function DashboardLayout({
         <div className="flex flex-col justify-between mt-14">
           <Sidebar user={user} />
         </div>
-        <section className="flex-grow overflow-y-auto mt-14">
-          {children}
-        </section>
+        <section className="flex-grow mt-14">{children}</section>
       </div>
       <FooterWithLogo />
     </div>

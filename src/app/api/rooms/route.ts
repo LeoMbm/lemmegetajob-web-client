@@ -25,13 +25,11 @@ export async function POST(req: Request, res: Response) {
       const user = session?.token;
       const email = user?.email.replace(/[^a-zA-Z0-9]/g, "");
       const room_name = "candidate-" + email;
-      console.log(room_name);
       const response = await axios.post(
         `${process.env.BASE_API_URL}/rooms`,
         {},
         config
       );
-      console.log(response);
 
       if (response.status === 200) {
         let rooms = await prisma.rooms.findFirst({

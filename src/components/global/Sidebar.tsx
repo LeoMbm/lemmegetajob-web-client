@@ -204,11 +204,13 @@ export default function ContentSeparator({ user }) {
             <Sidebar.Item
               href="https://ricodocs-58lic.notaku.site/"
               icon={HiViewBoards}
+              target="_blank"
             >
               <p>Documentation</p>
             </Sidebar.Item>
             <Sidebar.Item
               href="https://rico-2gfp4.desk.notaku.site/"
+              target="_blank"
               icon={HiViewBoards}
             >
               <p>Help Center</p>

@@ -68,7 +68,6 @@ export const RoomSettings = ({ user }) => {
     });
     const data = await res.json();
     if (res.status === 200) {
-      console.log(data);
       setRooms((prevRooms) => [...prevRooms, data.rooms]);
       setStatus("success");
       setMessage(data.data.message);
