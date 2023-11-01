@@ -7,7 +7,7 @@ import { PaymentInfoCard } from "./PaymentInfoCard";
 import { checkPlans } from "@/lib/subscription";
 import { usePlanData } from "@/lib/usePlanData";
 
-export const BillingSettings = async ({ user }) => {
+export const BillingSettings = ({ user }) => {
   return (
     <div>
       <>

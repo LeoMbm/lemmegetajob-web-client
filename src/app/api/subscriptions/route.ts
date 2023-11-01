@@ -33,7 +33,6 @@ export async function GET(req: NextRequest, res: NextResponse) {
       //   }
       const products = await stripe.products.list();
       const response = await parseProducts(products.data);
-      // console.log("[RESPONSE]", response);
       return new Response(JSON.stringify(response), {
         status: 200,
       });

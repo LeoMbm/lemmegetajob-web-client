@@ -25,134 +25,157 @@ export async function POST(req: NextRequest, res: NextResponse) {
   }
 
   const session = event.data.object as Stripe.Checkout.Session;
+  let user_id;
 
-  const subId = session.subscription || session.id;
 
   if (event.type === "checkout.session.completed") {
-    const subscription = await stripe.subscriptions.retrieve(subId as string);
-    console.log("[METADATA-CHECKOUT]", [session?.metadata]);
-
+    const subscription = await stripe.subscriptions.retrieve(
+      session.subscription as string
+    );
     if (!session?.metadata?.userId) {
       return new Response(JSON.stringify({ message: "No userId" }), {
         status: 400,
       });
     }
-    const product_name = session?.metadata?.product_name;
-    const monthlyPrice = (subscription.items.data[0].price.unit_amount /
-      100) as number;
-    let monthlyExecutionLimit = 108000;
-    let dailyExecutionLimit = 3600;
-    let upgradable = true;
-    let maxRooms = 1;
-    let hasIntegrations = false;
-    console.log(subscription.items.data[0]);
+    user_id = session.metadata.userId;
 
-    switch (product_name) {
-      case "Seeker Plan":
-        monthlyExecutionLimit = 216000;
-        dailyExecutionLimit = 7200;
-        maxRooms = 2;
-        hasIntegrations = true;
-        break;
-      case "Hunter Plan":
-        monthlyExecutionLimit = 360000;
-        dailyExecutionLimit = 18000;
-        upgradable = false;
-        maxRooms = 5;
-        hasIntegrations = true;
-        break;
-
-      default:
-        break;
-    }
-    await prisma.rooms.update({
-      where: {
-        userId: session.metadata.userId,
-      },
-      data: {
-        monthlyExecutionLimit,
-        dailyExecutionLimit,
-      },
-    });
     await prisma.plans.update({
       where: {
         stripeCustomerId: subscription.customer as string,
       },
       data: {
-        userId: session.metadata.userId,
+        userId: user_id,
         stripSubscriptionId: subscription.items.data[0].subscription,
         stripeCustomerId: subscription.customer as string,
-        stripePriceId: subscription.items.data[0].price.id,
-        stripeCurrentPeriodEnd: new Date(
-          subscription.current_period_end * 1000
-        ),
-        started_at: new Date(subscription.current_period_start * 1000),
-        name: session.metadata.product_name,
-        isUpgradable: upgradable,
-        monthlyPrice,
-        monthlyExecutionLimit,
-        dailyExecutionLimit,
-        maxRooms,
-        hasIntegration: hasIntegrations,
       },
     });
   }
 
-  // if (event.type === "customer.subscription.updated") {
-  //   const subscription = await stripe.subscriptions.retrieve(subId as string);
-  //   if (subscription.cancel_at_period_end) {
-  //     console.log("[CANCEL_SUB]", subscription.items);
-  //     // TODO: ADD CANCELLATION
-  //     await prisma.plans.update({
-  //       where: {
-  //         stripeCustomerId: subscription.customer,
-  //       },
-  //       data: {
-  //         stripePriceId: null,
-  //         stripeCurrentPeriodEnd: null,
-  //         stripSubscriptionId: null,
-  //         hasIntegration: false,
-  //         maxRooms: 1,
-  //         isUpgradable: true,
-  //         monthlyExecutionLimit: 7200,
-  //         dailyExecutionLimit: 3600,
-  //         monthlyPrice: 0,
-  //         name: "Free plan",
-  //       },
-  //     });
-  // } else {
-  //   console.log("[REACTIVATE_SUB]", subscription.items.data);
-  //   console.log("[WEBHOOK]", subscription);
-  //   const monthlyPrice = (subscription.items.data[0].price.unit_amount /
-  //     100) as number;
-  //   await prisma.plans.update({
-  //     where: {
-  //       stripeCustomerId: subscription.customer as string,
-  //     },
-  //     data: {
-  //       stripSubscriptionId: subscription.id as string,
-  //       stripePriceId: subscription.items.data[0].price.id,
-  //       stripeCurrentPeriodEnd: new Date(
-  //         subscription.current_period_end * 1000
-  //       ),
-  //       monthlyPrice,
-  //       name: subscription.metadata?.product_name,
-  //     },
-  //   });
-  // }
-  // }
-  // await prisma.plans.update({
-  //   where: {
-  //     stripeCustomerId: subscription.customer as string,
-  //   },
-  //   data: {
-  //     stripeCurrentPeriodEnd: new Date(
-  //       subscription.current_period_end * 1000
-  //     ),
-  //     stripePriceId: subscription.items.data[0].price.id,
-  //     stripSubscriptionId: subscription.id as string,
-  //   },
-  // });
+  if (event.type === "invoice.payment_succeeded") {
+    const subscription = await stripe.subscriptions.retrieve(
+      session.subscription as string
+    );
+    const product = await prisma.products.findFirst({
+      where: {
+        productId: subscription.items.data[0].plan.product as string,
+      },
+    });
+
+    const plans = await prisma.plans.update({
+      where: {
+        stripeCustomerId: subscription.customer as string,
+      },
+      data: {
+        dailyExecutionLimit: product?.dailyExecutionLimit,
+        hasIntegration: product?.hasIntegration,
+        maxRooms: product?.maxRooms,
+        monthlyExecutionLimit: product?.monthlyExecutionLimit,
+        name: product?.name,
+        isUpgradable: product?.isUpgradable,
+        monthlyPrice: product?.price,
+        stripePriceId: subscription.items.data[0].price.id,
+        stripSubscriptionId: subscription.items.data[0].subscription,
+        stripeCurrentPeriodEnd: new Date(
+          subscription.current_period_end * 1000
+        ),
+        started_at: new Date(subscription.current_period_start * 1000),
+      },
+    });
+    const userId = plans?.userId as string;
+
+    const room = await prisma.rooms.findFirst({
+      where: {
+        userId,
+      },
+    });
+    if (!room) {
+      return new Response(JSON.stringify(null), {
+        status: 400,
+      });
+    }
+    await prisma.rooms.update({
+      where: {
+        id: room.id,
+      },
+      data: {
+        monthlyExecutionLimit: product?.monthlyExecutionLimit,
+        dailyExecutionLimit: product?.dailyExecutionLimit,
+      },
+    });
+  }
+  if (event.type === "customer.subscription.updated") {
+    const subscription = await stripe.subscriptions.retrieve(
+      session.subscription as string
+    );
+    // If user cancel but plan work until end period
+    if (subscription.cancel_at_period_end) {
+      console.log("[CANCEL_SUB]", subscription.items);
+      // TODO: ADD CANCELLATION
+      await prisma.plans.update({
+        where: {
+          stripeCustomerId: subscription.customer as string,
+        },
+        data: {
+          stripePriceId: null,
+          stripeCurrentPeriodEnd: null,
+          stripSubscriptionId: null,
+          hasIntegration: false,
+          maxRooms: 1,
+          isUpgradable: true,
+          monthlyExecutionLimit: 7200,
+          dailyExecutionLimit: 3600,
+          monthlyPrice: 0,
+          name: "Free plan",
+        },
+      });
+    }
+    // If user change plan
+  }
+
+  if (event.type === "customer.subscription.deleted") {
+    const subscription = await stripe.subscriptions.retrieve(
+      session.id as string
+    );
+
+    const plans = await prisma.plans.update({
+      where: {
+        stripeCustomerId: subscription.customer as string,
+      },
+      data: {
+        stripePriceId: null,
+        stripeCurrentPeriodEnd: null,
+        stripSubscriptionId: null,
+        hasIntegration: false,
+        maxRooms: 1,
+        isUpgradable: true,
+        monthlyExecutionLimit: 7200,
+        dailyExecutionLimit: 3600,
+        monthlyPrice: 0,
+        name: "Free plan",
+      },
+    });
+    const userId = plans?.userId as string;
+
+    const room = await prisma.rooms.findFirst({
+      where: {
+        userId,
+      },
+    });
+    if (!room) {
+      return new Response(JSON.stringify(null), {
+        status: 400,
+      });
+    }
+    await prisma.rooms.update({
+      where: {
+        id: room.id,
+      },
+      data: {
+        monthlyExecutionLimit: 7200,
+        dailyExecutionLimit: 3600,
+      },
+    });
+  }
 
   return new Response(JSON.stringify({ message: "OK" }), {
     status: 200,

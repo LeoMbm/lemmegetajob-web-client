@@ -22,8 +22,7 @@ import {
 import { TbStarsFilled } from "react-icons/tb";
 import { SubButton } from "../button/SubButton";
 
-export const BillingPlanCard = async ({ data }) => {
-  const [user, setUser] = useState(data);
+export const BillingPlanCard = ({ data }) => {
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(false);
 
@@ -38,22 +37,22 @@ export const BillingPlanCard = async ({ data }) => {
           <CardBody>
             <Heading size="md">
               <Icon as={TbStarsFilled} className="w-5 h-5 mr-2 flex-shrink-0" />
-              Current Plan: {user.plans[0].name}
+              Current Plan: {data.plans[0].name}
             </Heading>
             <Text color="gray.500" fontSize="sm" py="2">
-              {user.plans[0].monthlyPrice}€/month
+              {data.plans[0].monthlyPrice}€/month
             </Text>
             <Flex direction="row" align="center">
               <UnorderedList py="2">
                 <ListItem>
                   {" "}
-                  Execution time: {user.plans[0].monthlyExecutionLimit / 3600}
+                  Execution time: {data.plans[0].monthlyExecutionLimit / 3600}
                   h/month
                 </ListItem>
-                <ListItem>Max room: {user.plans[0].maxRooms}</ListItem>
+                <ListItem>Max room: {data.plans[0].maxRooms}</ListItem>
               </UnorderedList>
             </Flex>
-            <SubButton isPro={user.isPro} />
+            <SubButton isPro={data.isPro} />
           </CardBody>
           {/* 
           <CardFooter>

@@ -27,11 +27,12 @@ export const PaymentInfoCard = ({ data }) => {
   const [loading, setLoading] = useState(false);
   const [disabled, setDisabled] = useState(false);
   const [billingUrl, setBillingUrl] = useState("");
+
   const handleBillingPortal = async () => {
     setLoading(true);
     setDisabled(true);
     const response = await fetch("/api/portal", {
-      method: "GET",
+      method: "POST",
     });
     if (response.status === 200) {
       const json = await response.json();
@@ -44,8 +45,6 @@ export const PaymentInfoCard = ({ data }) => {
       setDisabled(false);
     }
   };
-
-  handleBillingPortal();
 
   return (
     <>

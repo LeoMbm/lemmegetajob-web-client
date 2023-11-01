@@ -1,18 +1,12 @@
 import { FormUpdate } from "@/components/dashboard/settings/FormUpdate";
 import { IntegrationSettings } from "@/components/dashboard/settings/IntegrationSettings";
-import PremiumSettings from "@/components/dashboard/settings/PremiumSettings";
 import { RoomSettings } from "@/components/dashboard/settings/RoomSettings";
 import { BillingSettings } from "@/components/dashboard/settings/billing/BillingSettings";
-import appConfig from "@/data/config";
-import { fetchConfig } from "@/lib/fetchConfig";
-import { fetchServerSideProducts } from "@/lib/fetchServerSideProducts";
 import { fetchServerSideUser } from "@/lib/fetchServerSideUser";
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
 
 export default async function Page() {
   const user = await fetchServerSideUser();
-  // const products = await fetchServerSideProducts();
-    // console.log("[SERVER SIDE PRODUCTS]", products);
   return (
     <div className="h-full bg-gray-100 p-4">
       <div className="w-full">
@@ -28,9 +22,6 @@ export default async function Page() {
             <Tab>Billing</Tab>
             <Tab>Rooms</Tab>
             <Tab>Integration</Tab>
-            {/* <Tab isDisabled>Beta</Tab>
-            <Tab isDisabled>Beta</Tab>
-            <Tab isDisabled>Beta</Tab> */}
           </TabList>
           <TabPanels>
             <TabPanel>

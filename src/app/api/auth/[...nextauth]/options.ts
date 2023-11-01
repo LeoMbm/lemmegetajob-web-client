@@ -53,6 +53,7 @@ export const authOptions = {
     signIn: "/signin",
     signOut: "/signout",
   },
+  
   callbacks: {
     async session(session) {
       // Find a way to save the token for avoid regenerate it every time
@@ -75,12 +76,7 @@ export const authOptions = {
     },
     async jwt({ token }) {
       return token;
-    },
-    async signOut({ session, token }) {
-      if (session || token) {
-        removeToken();
-      }
-    },
+    }
   },
 };
 

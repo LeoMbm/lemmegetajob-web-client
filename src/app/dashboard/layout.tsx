@@ -15,6 +15,7 @@ export default async function DashboardLayout({
   if (!user) {
     redirect("/signin");
   }
+  
   return (
     <div className="flex flex-col min-h-screen">
       <div className="w-full">

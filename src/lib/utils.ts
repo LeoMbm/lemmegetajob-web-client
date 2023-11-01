@@ -3,6 +3,7 @@ import { User } from "@/types/user";
 import crypto from "crypto";
 import * as nodemailer from "nodemailer";
 import { stripe } from "@/lib/stripe";
+import { prisma } from "./db";
 
 const EMAIL_FROM = process.env.EMAIL_FROM;
 
@@ -90,6 +91,8 @@ export const parseProducts = async (products: any) => {
       features: [],
       price: 0,
     };
+    // await addProduct(products[i], price?.unit_amount)
+
     const price = await stripe.prices.retrieve(products[i].default_price);
     details.id = products[i].id;
     details.name = products[i].name;
@@ -99,12 +102,38 @@ export const parseProducts = async (products: any) => {
     details.line_items = products[i];
     response.push(details);
   }
+
   const sortedResponse = response.sort((a, b) => b.price - a.price).reverse();
 
   return sortedResponse;
 };
 
+export const addProduct = async (product, price) => {
+  await prisma.products.delete({
+    where: {
+      productId: product.id,
+    },
+  });
+
+  const hasIntegration = product.metadata.hasIntegration === "true";
+  const isUpgradable = product.metadata.isUpgradable === "true";
+  try {
+    await prisma.products.create({
+      data: {
+        hasIntegration,
+        isUpgradable,
+        maxRooms: parseFloat(product.metadata.MaxRooms),
+        monthlyExecutionLimit: parseFloat(product.metadata.MaxTimeMonth),
+        dailyExecutionLimit: parseFloat(product.metadata.MaxTimeDaily),
+        name: product.name,
+        price: price?.unit_amount / 100,
+        productId: product.id,
+      },
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
 export const checkEnvironmentUrl = () => {
   return process.env.NODE_ENV === "production" ? "" : "http://localhost:3000";
 };
-

@@ -59,6 +59,7 @@ export const SubscriptionModal = ({ overlay, isOpen, onClose }) => {
   useEffect(() => {
     fetchProduct();
   }, [isOpen]);
+  
   return (
     <>
       <Modal

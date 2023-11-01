@@ -6,6 +6,9 @@ import { useEffect } from "react";
 import { Providers } from "@/providers";
 import theme from "@/theme";
 import { ColorModeScript } from "@chakra-ui/react";
+import Script from "next/script";
+import { Head } from "next/document";
+import { CustomerFeedback } from "../components/global/CustomerFeedback";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,6 +29,7 @@ export default function RootLayout({
         <Provider>
           <Providers>{children}</Providers>
         </Provider>
+        {/* <CustomerFeedback /> */}
       </body>
     </html>
   );

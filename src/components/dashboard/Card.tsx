@@ -20,7 +20,7 @@ const Card = () => {
   const [loading, setLoading] = useState(true);
   const { data: sessionData } = useSession();
 
-  useEffect(() => {
+  const fetchData = async () => {
     fetch(`/api/data/jobs`)
       .then((res) => {
         if (!res.ok) {
@@ -42,6 +42,10 @@ const Card = () => {
         console.error("Error:", error);
         setLoading(false);
       });
+  };
+
+  useEffect(() => {
+    fetchData();
   }, []);
 
   return (

@@ -134,3 +134,17 @@ model Plans {
   maxRooms Float @default(1)
   hasIntegration Boolean @default(false)
 }
+
+model Products {
+
+  id String @id @default(cuid())
+  name String @unique
+  description String? @default("Product description")
+  productId String? @unique
+  price Float
+  isUpgradable Boolean
+  hasIntegration Boolean
+  monthlyExecutionLimit Float @default(3600.00)
+  dailyExecutionLimit Float @default(108000.00)
+  maxRooms Float @default(1) 
+}

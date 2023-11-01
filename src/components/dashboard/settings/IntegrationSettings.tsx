@@ -1,14 +1,13 @@
 "use client";
 import React, { useState } from "react";
-import appConfig from "@/data/config";
+import { appConfig } from "@/data/config";
 import { Integration } from "@/types/integration";
 import { Button } from "flowbite-react";
-import ButtonGroup from "flowbite-react/lib/esm/components/Button/ButtonGroup";
-import { Badge, Icon, IconButton } from "@chakra-ui/react";
+import { Badge, Icon, IconButton, ButtonGroup, Box } from "@chakra-ui/react";
 
 export const IntegrationSettings = () => {
   const [integrations, SetIntegrations] = useState<Integration[]>(
-    appConfig.integration
+    appConfig?.integration
   );
 
   return (
@@ -17,7 +16,7 @@ export const IntegrationSettings = () => {
         <h3>Connect Rico with your app:</h3>
       </div>
 
-      <ButtonGroup className="flex-col" color="blue">
+      <Box flexDirection="column" color="blue">
         {integrations.map((integration, i) => (
           <Button
             className="mt-4 rounded-md w-52 flex items-center"
@@ -36,7 +35,7 @@ export const IntegrationSettings = () => {
             </Badge>
           </Button>
         ))}
-      </ButtonGroup>
+      </Box>
     </div>
   );
 };
