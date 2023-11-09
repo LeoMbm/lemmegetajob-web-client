@@ -1,7 +1,7 @@
 // import LaunchButton from "@/components/dashboard/bot/LaunchButton";
-import { LogView } from "@/components/dashboard/bot/scraping/LogView";
-import { fetchServerSideUser } from "@/lib/fetchServerSideUser";
-
+import { LogView } from "../../../../components/dashboard/bot/scraping/LogView";
+import { fetchServerSideUser } from "../../../../libs/fetchServerSideUser";
+export const dynamic = "force-dynamic";
 export default async function Page() {
   const user = await fetchServerSideUser();
 

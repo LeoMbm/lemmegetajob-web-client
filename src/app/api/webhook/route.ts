@@ -1,11 +1,11 @@
 import { NextRequest, NextResponse } from "next/server";
-import { stripe } from "@/lib/stripe";
+import { stripe } from "../../../libs/stripe";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]/options";
-import { prisma } from "@/lib/db";
+import { prisma } from "../../../libs/db";
 import Stripe from "stripe";
 import { headers } from "next/headers";
-
+export const dynamic = "force-dynamic";
 export async function POST(req: NextRequest, res: NextResponse) {
   const body = await req.text();
   const signature = req.headers.get("Stripe-Signature") as string;
@@ -18,7 +18,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
       signature,
       process.env.STRIPE_WEBHOOK_SECRET!
     );
-  } catch (err) {
+  } catch (err: any) {
     return new Response(JSON.stringify({ message: err.message }), {
       status: 400,
     });
@@ -26,7 +26,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
 
   const session = event.data.object as Stripe.Checkout.Session;
   let user_id;
-
 
   if (event.type === "checkout.session.completed") {
     const subscription = await stripe.subscriptions.retrieve(

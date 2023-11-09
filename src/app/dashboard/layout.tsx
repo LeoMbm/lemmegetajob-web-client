@@ -1,11 +1,11 @@
-import Sidebar from "@/components/global/Sidebar";
-import Header from "@/components/global/Header";
-import FooterWithLogo from "@/components/global/Footer";
-import AuthRoute from "@/components/auth/AuthRoute";
+import Sidebar from "../../components/global/Sidebar";
+import Header from "../../components/global/Header";
+import FooterWithLogo from "../../components/global/Footer";
+import AuthRoute from "../../components/auth/AuthRoute";
 import { ChakraProvider } from "@chakra-ui/react";
-import { fetchServerSideUser } from "@/lib/fetchServerSideUser";
+import { fetchServerSideUser } from "../../libs/fetchServerSideUser";
 import { redirect } from "next/navigation";
-
+export const dynamic = "force-dynamic";
 export default async function DashboardLayout({
   children,
 }: {

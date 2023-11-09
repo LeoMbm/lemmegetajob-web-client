@@ -11,6 +11,7 @@ import { Head } from "next/document";
 import { CustomerFeedback } from "../components/global/CustomerFeedback";
 
 const inter = Inter({ subsets: ["latin"] });
+export const dynamic = "force-dynamic";
 
 export const metadata: Metadata = {
   title: "Rico | Apply to jobs with one click",

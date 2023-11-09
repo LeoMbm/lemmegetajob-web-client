@@ -1,9 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { stripe } from "@/lib/stripe";
+import { stripe } from "../../../libs/stripe";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]/options";
-import { prisma } from "@/lib/db";
-
+import { prisma } from "../../../libs/db";
+export const dynamic = "force-dynamic";
 export async function GET(req: NextRequest, res: NextResponse) {
   try {
     const session = await getServerSession({ req, ...authOptions });

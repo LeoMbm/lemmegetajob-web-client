@@ -8,13 +8,12 @@ import { StopButton } from "../StopButton";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 import { LogApplyItem } from "./LogApplyItem";
-import { useUserData } from "@/lib/useUserData";
-import { User } from "@/types/user";
+import { useUserData } from "../../../../libs/useUserData";
+import { User } from "../../../../types/user";
 import { Spinner } from "flowbite-react";
 import Cookies from "js-cookie";
 
 const LOG_URL = process.env.NEXT_PUBLIC_LOG_REALTIME_URL;
-
 export const LogApplyView = ({ user }) => {
   // const { userData, error, isLoading } = useUserData();
   const router = useRouter();

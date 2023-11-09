@@ -1,15 +1,16 @@
 "use client";
-import { useUserData } from "@/lib/useUserData";
-import { User } from "@/types/user";
+import { useUserData } from "../../../libs/useUserData";
+import { User } from "../../../types/user";
 import { Spinner } from "flowbite-react";
 import { useSession } from "next-auth/react";
+import Image from "next/image";
 import React from "react";
 
 export const UserCard = ({ user }) => {
   const full_name = user.first_name + " " + user.last_name;
   return (
     <div className="w-full max-w-sm overflow-hidden bg-white rounded-lg shadow-lg dark:bg-gray-800">
-      <img
+      <Image
         className="object-cover object-center w-full h-56"
         src="https://images.unsplash.com/photo-1517841905240-472988babdf9?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=334&q=80"
         alt="avatar"

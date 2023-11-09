@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 
-export const LogApplyItem = ({ log, index }) => {
+type LogApplyItemProps = {
+  log: string;
+  index: number;
+};
+export const LogApplyItem = ({ log, index }: LogApplyItemProps) => {
   const [isNewLog, setIsNewLog] = useState(true);
 
   useEffect(() => {

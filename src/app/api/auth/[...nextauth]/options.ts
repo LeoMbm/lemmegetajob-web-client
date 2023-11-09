@@ -1,13 +1,17 @@
 import NextAuth from "next-auth/next";
-import { User } from "next-auth";
+import { NextAuthOptions, User } from "next-auth";
 import { PrismaAdapter } from "@auth/prisma-adapter";
-import { prisma } from "@/lib/db";
+import { prisma } from "../../../../libs/db";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { getStoredToken, removeToken, storeToken } from "@/lib/cookie";
+import {
+  getStoredToken,
+  removeToken,
+  storeToken,
+} from "../../../../libs/cookie";
 
-export const authOptions = {
+export const authOptions: NextAuthOptions = {
   adapter: PrismaAdapter(prisma),
   providers: [
     CredentialsProvider({
@@ -46,6 +50,7 @@ export const authOptions = {
   ],
   secret: process.env.NEXTAUTH_SECRET,
   session: {
+
     strategy: "jwt",
   },
   debug: process.env.NODE_ENV === "development",
@@ -54,7 +59,7 @@ export const authOptions = {
     signOut: "/signout",
   },
   callbacks: {
-    async session(session) {
+    async session(session: any) {
       // Find a way to save the token for avoid regenerate it every time
       if (!session.backendToken) {
         const storedToken = getStoredToken();
@@ -73,14 +78,9 @@ export const authOptions = {
       }
       return session;
     },
-    async jwt({ token }) {
+    async jwt({ token }: any) {
       return token;
-    },
-    async signOut({ session, token }) {
-      if (session || token) {
-        removeToken();
-      }
-    },
+    }
   },
 };
 

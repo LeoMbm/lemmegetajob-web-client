@@ -1,6 +1,6 @@
-import { LogApplyView } from "@/components/dashboard/bot/apply/LogApplyView";
-import { fetchServerSideUser } from "@/lib/fetchServerSideUser";
-
+import { LogApplyView } from "../../../../components/dashboard/bot/apply/LogApplyView";
+import { fetchServerSideUser } from "../../../../libs/fetchServerSideUser";
+export const dynamic = "force-dynamic";
 export default async function Page() {
   const user = await fetchServerSideUser();
   return (

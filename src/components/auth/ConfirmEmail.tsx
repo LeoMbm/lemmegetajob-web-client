@@ -15,8 +15,7 @@ export const ConfirmEmail = () => {
   const [verified, setVerified] = useState<Boolean>();
   const [message, setMessage] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [status, setStatus] = useState();
-
+  const [status, setStatus] = useState("");
 
   const verifyEmail = async () => {
     const response = await fetch(`api/auth/confirm?token=${token}`, {
@@ -38,7 +37,7 @@ export const ConfirmEmail = () => {
   };
 
   useEffect(() => {
-    if (token?.length > 0) verifyEmail();
+    if (token && token.length > 0) verifyEmail();
   }, [token]);
 
   return (

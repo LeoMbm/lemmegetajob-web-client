@@ -1,13 +1,13 @@
 import bcrypt from "bcrypt";
-import { prisma } from "@/lib/db";
+import { prisma } from "../../../../libs/db";
 import { NextRequest, NextResponse } from "next/server";
 import {
   createConfirmationToken,
   generateUniqueToken,
   sendEmail,
-} from "@/lib/utils";
-import { stripe } from "../../../../lib/stripe";
-
+} from "../../../../libs/utils";
+import { stripe } from "../../../../libs/stripe";
+export const dynamic = "force-dynamic";
 export async function POST(req: NextRequest) {
   const { email, first_name, last_name, password, phone, position } =
     await req.json();

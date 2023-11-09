@@ -4,12 +4,18 @@ import { Modal, Spinner } from "flowbite-react";
 import { useState } from "react";
 import { HiOutlineExclamationCircle } from "react-icons/hi";
 
+type PopUpModalProps = {
+  isOpen: boolean;
+  onClose: () => void;
+  itemToEdit: any;
+  setJobList: any;
+};
 export default function PopUpModal({
   isOpen,
   onClose,
   itemToEdit,
   setJobList,
-}) {
+}: PopUpModalProps) {
   // console.log(itemToEdit);
   const [loading, setLoading] = useState(false);
   const handleDeleteClick = (itemId: number) => {

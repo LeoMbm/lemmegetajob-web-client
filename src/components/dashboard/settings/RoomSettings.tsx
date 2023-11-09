@@ -24,11 +24,11 @@ import {
   AccordionPanel,
   AccordionIcon,
 } from "@chakra-ui/react";
-import { useUserData } from "@/lib/useUserData";
-import ToastMessage from "@/components/global/alert/Toast";
+import { useUserData } from "../../../libs/useUserData";
+import ToastMessage from "../../global/alert/Toast";
 import { useSession } from "next-auth/react";
 import { DeleteRoom } from "./modal/DeleteRoom";
-import { Room } from "@/types/room";
+import { Room } from "../../../types/room";
 import { MdCheckCircle } from "react-icons/md";
 import { DeleteIcon, EmailIcon } from "@chakra-ui/icons";
 import Cookies from "js-cookie";
@@ -104,7 +104,6 @@ export const RoomSettings = ({ user }) => {
       }
     }
   }, []);
-
 
   return (
     <>

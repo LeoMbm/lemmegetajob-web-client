@@ -1,8 +1,8 @@
 import axios from "axios";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../../auth/[...nextauth]/options";
-import { prisma } from "@/lib/db";
-
+import { prisma } from "../../../../libs/db";
+export const dynamic = "force-dynamic";
 export async function POST(req: Request, res: Response) {
   if (req.method === "POST") {
     // bearerToken without Bearer
@@ -44,8 +44,7 @@ export async function POST(req: Request, res: Response) {
         return new Response(JSON.stringify(response.data), {
           status: 200,
         });
-      } 
-      else {
+      } else {
         return new Response(JSON.stringify(response.data), {
           status: response.status,
         });

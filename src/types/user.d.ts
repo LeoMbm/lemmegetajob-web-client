@@ -4,12 +4,13 @@ export type User = {
   last_name: string;
   email: string;
   phone: string;
+  password?: string;
   current_position: string;
   current_company: string;
   current_location: string;
   description: string;
-  created_at: string;
-  updated_at: string;
+  created_at?: string;
+  updated_at?: string;
   emailVerified: boolean;
   confirmationToken: string;
   rooms: Room[];

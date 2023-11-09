@@ -1,19 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
-import { stripe } from "@/lib/stripe";
+import { stripe } from "../../../libs/stripe";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]/options";
-import { prisma } from "@/lib/db";
-
-const calculateOrderAmount = (items) => {
-  // Replace this constant with a calculation of the order's amount
-  // Calculate the order total on the server to prevent
-  // people from directly manipulating the amount on the client
-  if (!items) {
-    return 0;
-  }
-  return 1400;
-};
-
+import { prisma } from "../../../libs/db";
+export const dynamic = "force-dynamic";
 export async function POST(req: NextRequest, res: NextResponse) {
   try {
     const session = await getServerSession({ req, ...authOptions });
@@ -23,7 +13,7 @@ export async function POST(req: NextRequest, res: NextResponse) {
       });
     }
 
-    const user = session?.token;
+    const user = session.token;
     const userId = user.sub;
     const line_items = await req.json();
 
@@ -64,7 +54,6 @@ export async function POST(req: NextRequest, res: NextResponse) {
         {
           price: line_items.line_items.default_price,
           quantity: 1,
-          
         },
       ],
       metadata: {

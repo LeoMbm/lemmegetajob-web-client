@@ -1,8 +1,8 @@
-import { prisma } from "@/lib/db";
+import { prisma } from "../../../../libs/db";
 import { getServerSession } from "next-auth/next";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "../../auth/[...nextauth]/options";
-
+export const dynamic = "force-dynamic";
 export async function GET(req: NextRequest, res: NextResponse) {
   if (req.method === "GET") {
     const bearerToken = req.headers.get("Authorization")?.split(" ")[1];
@@ -12,15 +12,12 @@ export async function GET(req: NextRequest, res: NextResponse) {
       },
     };
 
-    
-    
     try {
       const session = await getServerSession({ req, ...authOptions });
       if (!session) {
         return new Response(JSON.stringify({ message: "Not Authorized" }), {
           status: 401,
         });
-      
       }
       const url = new URL(req.url);
 

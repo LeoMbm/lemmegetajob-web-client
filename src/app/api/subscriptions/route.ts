@@ -1,11 +1,12 @@
 import axios from "axios";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "../auth/[...nextauth]/options";
-import { prisma } from "@/lib/db";
+import { prisma } from "../../../libs/db";
 import { NextRequest, NextResponse } from "next/server";
-import { stripe } from "@/lib/stripe";
-import { parseProducts } from "@/lib/utils";
+import { stripe } from "../../../libs/stripe";
+import { parseProducts } from "../../../libs/utils";
 import jwt from "jsonwebtoken";
+export const dynamic = "force-dynamic";
 export async function GET(req: NextRequest, res: NextResponse) {
   if (req.method === "GET") {
     try {

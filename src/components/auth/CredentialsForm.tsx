@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, use } from "react";
+import { useState, useEffect, use, ChangeEvent, MouseEvent } from "react";
 import { signIn, useSession } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
 import ToastMessage from "../global/alert/Toast";
@@ -32,23 +32,22 @@ export default function CredentialsForm() {
       setStatus(null);
     };
 
-    const handleEmailChange = (event) => {
+    const handleEmailChange = (event: ChangeEvent<HTMLInputElement>) => {
         setEmail(event.target.value);
     }
 
-    const handlePasswordChange = (event) => {
+    const handlePasswordChange = (event: ChangeEvent<HTMLInputElement>) => {
         setPassword(event.target.value);
     }
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
+    const handleSubmit = () => {
         const data = {
             email: email,
             password: password
         };
         setIsLoading(true);
         signIn('credentials', { ...data, redirect: false, callbackUrl})
-        .then((response) => {
+        .then((response: any) => {
           if (response?.error === null) {
               setMessage("Login successful");
               setStatus('success');
@@ -83,7 +82,7 @@ export default function CredentialsForm() {
           <label htmlFor="remember" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Remember me</label>
         </div>
         <button
-            onClick={(e) => handleSubmit(e)}
+            onClick={handleSubmit}
             type="submit"
             className={`text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
             disabled={isLoading}

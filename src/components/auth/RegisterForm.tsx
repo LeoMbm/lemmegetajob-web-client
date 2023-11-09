@@ -24,7 +24,7 @@ export const RegisterForm = () => {
     phone: "",
   });
 
-  const handleChange = (e: React.FormEvent<HTMLInputElement>) => {
+  const handleChange = (e: { target: { name: any; value: any } }) => {
     const { name, value } = e.target;
     setUser({
       ...user,

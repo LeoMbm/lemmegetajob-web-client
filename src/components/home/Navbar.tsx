@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React from "react";
 
 export const NavbarHome = () => {
@@ -6,7 +7,7 @@ export const NavbarHome = () => {
       <nav className="bg-gray-100 border-gray-200 dark:bg-gray-900">
         <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
           <a href="https://ricosaas.eu/" className="flex items-center">
-            <img
+            <Image
               src="https://ricosaas.eu/static/screenshots/logo.png"
               className="h-8 mr-3"
               alt="Rico Logo"

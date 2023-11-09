@@ -1,7 +1,7 @@
-import { prisma } from "@/lib/db";
-import { checkConfirmationToken } from "@/lib/utils";
+import { prisma } from "../../../../libs/db";
+import { checkConfirmationToken } from "../../../../libs/utils";
 import { NextResponse, NextRequest } from "next/server";
-
+export const dynamic = "force-dynamic";
 export async function GET(req: NextRequest) {
   let params = req.nextUrl.searchParams;
   let token = params.get("token");

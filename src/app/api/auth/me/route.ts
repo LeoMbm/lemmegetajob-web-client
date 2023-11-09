@@ -1,25 +1,23 @@
 import bcrypt from "bcrypt";
-import { prisma } from "@/lib/db";
+import { prisma } from "../../../../libs/db";
 import { NextResponse, NextRequest } from "next/server";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../[...nextauth]/options";
-import { checkPlans } from "@/lib/subscription";
-import { User } from "@/types/user";
+import { checkPlans } from "../../../../libs/subscription";
+import { User } from "../../../../types/user";
 import { cookies } from "next/headers";
 import jwt from "jsonwebtoken";
-import { getToken } from "next-auth/jwt";
+export const dynamic = "force-dynamic";
 export async function GET(req: NextRequest) {
   // Get user
   const session = await getServerSession({ req, ...authOptions });
   const secret = process.env.NEXTAUTH_SECRET as string;
+
   if (!session) {
     const headers = req.headers.get("Authorization");
     const bearerToken = headers?.split(" ")[1];
     if (bearerToken) {
-      const token = jwt.verify(
-        bearerToken,
-        process.env.NEXTAUTH_SECRET as string
-      );
+      const token = jwt.verify(bearerToken, secret);
 
       const user = await prisma.user.findUnique({
         where: {
@@ -33,8 +31,8 @@ export async function GET(req: NextRequest) {
       if (user) {
         const isPro = await checkPlans(token.sub as string);
         user.isPro = isPro;
-        delete user.password;
-        return new NextResponse(JSON.stringify(user), {
+        const { password, ...userWithoutPassword } = user;
+        return new NextResponse(JSON.stringify({ ...userWithoutPassword }), {
           headers: {
             "Content-Type": "application/json",
           },
@@ -45,22 +43,29 @@ export async function GET(req: NextRequest) {
       status: 401,
     });
   }
-  const userId = session.token.sub;
+  const userId = session?.user?.email as string;
 
   const user = await prisma.user.findUnique({
     where: {
-      id: userId,
+      email: userId,
     },
     include: {
       rooms: true,
       plans: true,
     },
   });
+  if (!user) {
+    return new NextResponse(JSON.stringify({ message: "Not Authorized" }), {
+      status: 401,
+    });
+  }
   const isPro = await checkPlans(userId);
   user.isPro = isPro;
-  delete user.password;
+  const { password, confirmationToken, ...userWithoutPassword } = user;
 
-  return new NextResponse(JSON.stringify({ user }), { status: 200 });
+  return new NextResponse(JSON.stringify({ ...userWithoutPassword }), {
+    status: 200,
+  });
 }
 
 export async function PUT(req: NextRequest) {
@@ -78,11 +83,11 @@ export async function PUT(req: NextRequest) {
       status: 401,
     });
   }
-  const userId = session.token.sub;
+  const userId = session.user?.email as string;
 
   const user = await prisma.user.update({
     where: {
-      id: userId,
+      email: userId,
     },
     data: {
       ...body,

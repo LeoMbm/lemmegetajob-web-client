@@ -1,7 +1,4 @@
 "use client";
-
-import Loading from "@/app/dashboard/loading";
-import { getStoredToken } from "@/lib/cookie";
 import { Spinner } from "flowbite-react";
 import { useSession } from "next-auth/react";
 import { useEffect, useState } from "react";
@@ -18,7 +15,6 @@ const INITIAL_DATA = {
 const Card = () => {
   const [data, setData] = useState(INITIAL_DATA);
   const [loading, setLoading] = useState(true);
-  const { data: sessionData } = useSession();
 
   const fetchData = async () => {
     fetch(`/api/data/jobs`)
@@ -33,7 +29,7 @@ const Card = () => {
           ...prev,
           "Total Jobs": String(jobs.length),
           "Total Companies": String(
-            new Set(jobs.map((job) => job.company)).size
+            new Set(jobs.map((job: { company: any }) => job.company)).size
           ),
         }));
         setLoading(false);

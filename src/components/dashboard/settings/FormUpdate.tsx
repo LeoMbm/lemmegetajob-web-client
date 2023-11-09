@@ -1,7 +1,7 @@
 "use client";
-import ToastMessage from "@/components/global/alert/Toast";
-import { useUserData } from "@/lib/useUserData";
-import { User } from "@/types/user";
+import ToastMessage from "../../global/alert/Toast";
+import { useUserData } from "../../../libs/useUserData";
+import { User } from "@types/user";
 import { Spinner } from "flowbite-react";
 import React, { useEffect, useState } from "react";
 

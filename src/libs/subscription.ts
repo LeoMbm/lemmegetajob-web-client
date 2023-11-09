@@ -1,4 +1,4 @@
-import { prisma } from "@/lib/db";
+import { prisma } from "./db";
 
 const DAY_IN_MILLISECONDS = 86_400_000;
 

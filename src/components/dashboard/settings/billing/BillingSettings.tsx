@@ -1,11 +1,11 @@
 "use client";
 import React from "react";
 import { BillingPlanCard } from "./BillingPlanCard";
-import { useUserData } from "@/lib/useUserData";
+import { useUserData } from "../../../../libs/useUserData";
 import { Button, Grid, GridItem, Spinner } from "@chakra-ui/react";
 import { PaymentInfoCard } from "./PaymentInfoCard";
-import { checkPlans } from "@/lib/subscription";
-import { usePlanData } from "@/lib/usePlanData";
+import { checkPlans } from "../../../../libs/subscription";
+import { usePlanData } from "../../../../libs/usePlanData";
 
 export const BillingSettings = ({ user }) => {
   return (

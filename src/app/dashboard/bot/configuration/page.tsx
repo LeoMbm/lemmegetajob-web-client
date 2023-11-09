@@ -1,6 +1,6 @@
 import TabsConfig from "@/components/dashboard/configuration/TabsConfig";
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
-
+export const dynamic = "force-dynamic";
 export default function Page() {
   return (
     <div className="h-full bg-gray-100 p-2 md:p-4">

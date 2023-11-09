@@ -50,6 +50,7 @@ model User {
   image            String?   @db.VarChar(255)
   create_time      DateTime  @default(now()) @db.Timestamp(6)
   update_time      DateTime? @db.Timestamp(6)
+  isPro            Boolean @default(false)
   accounts      Account[]
   sessions      Session[]
   jobs          Job[]

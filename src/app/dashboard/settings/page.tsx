@@ -1,10 +1,10 @@
-import { FormUpdate } from "@/components/dashboard/settings/FormUpdate";
-import { IntegrationSettings } from "@/components/dashboard/settings/IntegrationSettings";
-import { RoomSettings } from "@/components/dashboard/settings/RoomSettings";
-import { BillingSettings } from "@/components/dashboard/settings/billing/BillingSettings";
-import { fetchServerSideUser } from "@/lib/fetchServerSideUser";
+import { FormUpdate } from "../../../components/dashboard/settings/FormUpdate";
+import { IntegrationSettings } from "../../../components/dashboard/settings/IntegrationSettings";
+import { RoomSettings } from "../../../components/dashboard/settings/RoomSettings";
+import { BillingSettings } from "../../../components/dashboard/settings/billing/BillingSettings";
+import { fetchServerSideUser } from "../../../libs/fetchServerSideUser";
 import { Tabs, TabList, TabPanels, Tab, TabPanel } from "@chakra-ui/react";
-
+export const dynamic = "force-dynamic";
 export default async function Page() {
   const user = await fetchServerSideUser();
   return (

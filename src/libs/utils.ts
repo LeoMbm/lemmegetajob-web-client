@@ -1,8 +1,8 @@
-import { Product } from "@/types/products";
-import { User } from "@/types/user";
+import { Product } from "../types/products";
+import { User } from "../types/user";
 import crypto from "crypto";
 import * as nodemailer from "nodemailer";
-import { stripe } from "@/lib/stripe";
+import { stripe } from "./stripe";
 import { prisma } from "./db";
 
 const EMAIL_FROM = process.env.EMAIL_FROM;
